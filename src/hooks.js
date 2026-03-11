@@ -45,10 +45,13 @@ export function usePersistedState(key, def, version) {
     }
     load().finally(() => { if (!cancelled) setLoaded(true); });
     return () => { cancelled = true; };
-  }, []);
+  }, [key, version]);
   const persist = useCallback(v => {
-    setValue(v);
-    storage.set(key, JSON.stringify({ version, value: v })).catch(console.error);
+    setValue(prev => {
+      const newValue = typeof v === 'function' ? v(prev) : v;
+      storage.set(key, JSON.stringify({ version, value: newValue })).catch(console.error);
+      return newValue;
+    });
   }, [key, version]);
   return [value, persist, loaded];
 }
