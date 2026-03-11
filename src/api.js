@@ -78,7 +78,7 @@ export function buildPrompt(num, servings, calories, special, rules, isBatch) {
     isBatch ? 'BATCH COOK recipe — must store/reheat well (soups, stews, curries, casseroles).' : null,
     isBatch ? 'Simple instant-pot, slow cooker, stock pot, or oven dish.' : null,
   ].filter(Boolean);
-  const rulesText = auto.concat(rules || DEFAULT_RULES).map(r => '- ' + r).join('\n');
+  const rulesText = auto.concat(isBatch ? [] : (rules || DEFAULT_RULES)).map(r => '- ' + r).join('\n');
   return {
     system: 'You are a concise meal planner. Output ONLY the structured data requested. Start immediately with -----TAB1----- with no preamble.',
     user: [

@@ -1,0 +1,45 @@
+/* Header Container */
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+/* Header Info */
+.headerInfo {
+  flex: 1;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.summary {
+  font-size: 14px;
+  margin: 6px 0 0;
+  color: var(--muted-color);
+}
+
+.batchInfo {
+  margin-left: 8px;
+  color: var(--teal-color);
+}
+
+/* Settings Button */
+.settingsButton {
+  border-radius: 10px;
+  color: var(--muted-color);
+  padding: 8px 14px;
+  font-size: 18px;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  background: var(--button-bg);
+}
+
+.settingsButton:hover {
+  opacity: 0.8;
+}

@@ -3,19 +3,20 @@ import { C, S, RULES_KEY, RULES_VER, DEFAULT_RULES } from './constants';
 import { callClaude, buildPrompt, pickCuisines, chunkArr, pLimit } from './api';
 import { parseTabFormat, combineParsed, mergeParsedArray, saveRecipesBatched } from './data';
 import { useElapsed, usePersistedState } from './hooks';
-import { PickerRow, CalorieInput, SpecialRequestInput, ErrorBoundary } from './components/ui';
-import { RulesEditor } from './components/RulesEditor';
-import { MealView } from './components/MealView';
-import { HistoryTab } from './components/History';
+import { ErrorBoundary } from './components/ui/ui';
+import { MealView } from './components/MealView/MealView';
+import { HistoryTab } from './components/History/History';
+import { HeaderView } from './components/HeaderView/HeaderView';
+import { PromptView } from './components/PromptView/PromptView';
 
 function MealPlanner() {
-  const [page, setPage] = useState('generate');
+  const [page, setPage] = useState('thisweek');
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState('');
   const [progress, setProgress] = useState([]);
-  const [mealData, setMealData] = useState(null);
+  const [mealData, setMealData] = usePersistedState('currentMealPlan', null, 'v1');
   const [error, setError] = useState('');
-  const [showSettings, setShowSettings] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const [prefs, setPrefs, prefsLoaded] = usePersistedState('settings:prefs', {
     numDinners:3, numPeople:2, calories:750, batchEnabled:false, numBatch:2, batchServings:15,
@@ -36,6 +37,14 @@ function MealPlanner() {
 
   useEffect(() => { if(selectedBatch.length>numBatch) setSelectedBatch(p=>p.slice(0,numBatch)); }, [numBatch]);
   useEffect(() => () => { if(abortRef.current) abortRef.current.abort(); }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   async function generate(special) {
     if (abortRef.current) abortRef.current.abort();
@@ -118,85 +127,119 @@ function MealPlanner() {
 
   const btnLabel = loading?'✨ Generating...':'✨ Generate This Week\'s Meals'+(batchEnabled?' + Batch':'');
 
+  const handleViewHistoryMeal = useCallback((mealPlan) => {
+    setMealData(mealPlan);
+    setPage('thisweek');
+  }, [setMealData]);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div style={S.wrap}>
       <div style={S.inner}>
-        <div style={S.hdrRow}>
-          <div>
-            <h1 style={{ fontSize:28, fontWeight:700, color:'#f8fafc', margin:0 }}>🍽️ Weekly Meal Planner</h1>
-            <p style={{ color:C.muted, fontSize:14, margin:'6px 0 0' }}>
-              {numDinners+' dinner'+(numDinners>1?'s':'')+' · '+numPeople+' '+(numPeople>1?'people':'person')+' · 🔥 '+calories+' cal'}
-              {batchEnabled&&<span style={{ marginLeft:8, color:C.teal }}>{'· 🍲 Batch ×'+numBatch+' ('+batchServings+' srv)'}</span>}
-            </p>
-          </div>
-          <button onClick={()=>setShowSettings(v=>!v)} style={{ background:showSettings?C.border:'transparent', border:'1px solid '+C.border, borderRadius:10, color:C.muted, padding:'8px 14px', fontSize:18, cursor:'pointer' }}>⚙️</button>
-        </div>
+        <HeaderView
+          numDinners={numDinners}
+          setNumDinners={setNumDinners}
+          numPeople={numPeople}
+          setNumPeople={setNumPeople}
+          calories={calories}
+          setCalories={setCalories}
+          batchEnabled={batchEnabled}
+          setBatchEnabled={setBatchEnabled}
+          numBatch={numBatch}
+          setNumBatch={setNumBatch}
+          batchServings={batchServings}
+          setBatchServings={setBatchServings}
+          selectedBatch={selectedBatch}
+        />
 
-        {showSettings && (
-          <div style={S.settPanel}>
-            <p style={S.settTitle}>Settings</p>
-            <div style={S.settRow}>
-              <PickerRow label="🍽️ Dinners / week" value={numDinners} setValue={setNumDinners} options={[2,3,4,5,6,7]} />
-              <PickerRow label="👥 People / dinner" value={numPeople} setValue={setNumPeople} options={[1,2,3,4,5,6]} />
-              <CalorieInput calories={calories} setCalories={setCalories} />
-            </div>
-            <div style={S.settDiv}>
-              <p style={S.batchSecTit}>🍲 Batch Cook Settings</p>
-              <div style={S.settRow}>
-                <PickerRow label="🍲 Batch recipes" value={numBatch} setValue={setNumBatch} options={[1,2,3,4]} ac={C.teal} bg={C.tealBg} tc={C.tealText} />
-                <PickerRow label="🥣 Batch servings" value={batchServings} setValue={setBatchServings} options={[8,10,12,15,20]} ac={C.teal} bg={C.tealBg} tc={C.tealText} />
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Generate controls - always visible */}
+        <PromptView
+          onGenerate={generate}
+          buttonLabel={btnLabel}
+          loading={loading}
+          stage={stage}
+          elapsed={elapsed}
+          progress={progress}
+          numDinners={numDinners}
+          error={error}
+          customRules={customRules}
+          setCustomRules={setCustomRules}
+          numPeople={numPeople}
+          calories={calories}
+          rulesLoaded={rulesLoaded}
+        />
 
+        {/* Tab navigation */}
         <div style={S.navBar}>
-          {[['generate','✨ Generate'],['history','🕘 History']].map(([k,l]) => (
-            <button key={k} onClick={()=>setPage(k)} style={{ flex:1, padding:10, border:'none', borderRadius:9, background:page===k?C.accent:'transparent', color:page===k?'#fff':C.dim, fontWeight:page===k?700:400, fontSize:14, cursor:'pointer' }}>{l}</button>
+          {[['thisweek','📅 This Week'],['history','🕘 History']].map(([k,l]) => (
+            <button key={k} onClick={()=>setPage(k)} style={{ flex:1, padding:10, border:'none', borderRadius:9, background:page===k?C.accent:'transparent', color:page===k?'#fff':C.dim, fontWeight:page===k?700:400, fontSize:20, cursor:'pointer' }}>{l}</button>
           ))}
         </div>
 
-        {page==='generate' && (
+        {page==='thisweek' && (
           <div>
-            <div style={S.genPanel}>
-              <div onClick={()=>setBatchEnabled(v=>!v)} style={batchEnabled?S.togOn:S.togOff}>
-                <div>
-                  <span style={{ fontWeight:700, color:batchEnabled?C.teal:C.muted, fontSize:14 }}>🍲 Batch Cook</span>
-                  <span style={{ marginLeft:10, fontSize:12, color:batchEnabled?C.tealText:C.dimmer }}>
-                    {batchEnabled?'Generating '+numBatch+' batch recipe'+(numBatch>1?'s':'')+' ('+batchServings+' servings each)':'Off — click to enable'}
-                  </span>
-                  {batchEnabled&&selectedBatch.length>0&&<span style={{ marginLeft:8, background:C.teal, color:C.tealDark, borderRadius:10, padding:'1px 8px', fontSize:10, fontWeight:700 }}>{selectedBatch.length+' from history'}</span>}
-                </div>
-                <div style={batchEnabled?S.trackOn:S.trackOff}><div style={batchEnabled?S.thumbOn:S.thumbOff} /></div>
+            {mealData ? <MealView mealData={mealData} /> : (
+              <div style={{ textAlign:'center', padding:'60px 20px', color:C.dim }}>
+                <p style={{ fontSize:40, margin:0 }}>📭</p>
+                <p style={{ fontSize:16, marginTop:10 }}>No meal plan generated yet.</p>
+                <p style={{ fontSize:13, color:C.dimmer, marginTop:4 }}>Click "Generate This Week's Meals" above to get started!</p>
               </div>
-              <SpecialRequestInput onSubmit={generate} buttonLabel={btnLabel} disabled={loading} />
-              {loading && (
-                <div style={{ marginTop:16 }}>
-                  <div style={S.pgMeta}>
-                    <p style={{ color:C.dim, fontSize:12, margin:0 }}>{stage+' ('+elapsed+'s)'}</p>
-                    <div style={S.pgBar}>
-                      <div style={{ width:Math.min((elapsed/75)*100,95)+'%', height:'100%', background:'linear-gradient(90deg,#6366f1,#8b5cf6)', borderRadius:2, transition:'width 1s linear' }} />
-                    </div>
-                  </div>
-                  <div style={S.pgRow}>
-                    {progress.map((done,i) => {
-                      const isBatch=i>=numDinners;
-                      return <div key={i} style={done?(isBatch?S.pgDoneB:S.pgDone):S.pgPend}>{done?'✓':'⏳'}{' '+(isBatch?'Batch '+(i-numDinners+1):'Recipe '+(i+1))}</div>;
-                    })}
-                  </div>
-                </div>
-              )}
-              {error&&<p style={{ color:C.warn, marginTop:10, fontSize:13 }}>{error}</p>}
-              {rulesLoaded&&<RulesEditor customRules={customRules} setCustomRules={setCustomRules} numPeople={numPeople} calories={calories} />}
-            </div>
-            {mealData&&<MealView mealData={mealData} />}
+            )}
           </div>
         )}
 
         {page==='history' && (
-          <HistoryTab numDinners={numDinners} numPeople={numPeople} calories={calories} customRules={customRules} batchCookEnabled={batchEnabled} numBatchCook={numBatch} selectedBatch={selectedBatch} setSelectedBatch={setSelectedBatch} />
+          <HistoryTab
+            numDinners={numDinners}
+            numPeople={numPeople}
+            calories={calories}
+            customRules={customRules}
+            batchCookEnabled={batchEnabled}
+            numBatchCook={numBatch}
+            selectedBatch={selectedBatch}
+            setSelectedBatch={setSelectedBatch}
+            onViewMealPlan={handleViewHistoryMeal}
+          />
         )}
       </div>
+
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          style={{
+            position: 'fixed',
+            bottom: '30px',
+            right: '30px',
+            width: '50px',
+            height: '50px',
+            borderRadius: '25px',
+            border: 'none',
+            background: C.accent,
+            color: '#fff',
+            fontSize: '24px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.3s ease',
+            zIndex: 1000
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+          }}
+        >
+          ↑
+        </button>
+      )}
     </div>
   );
 }

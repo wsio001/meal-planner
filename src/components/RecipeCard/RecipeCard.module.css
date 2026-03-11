@@ -1,0 +1,157 @@
+/* RecipeCard Wrapper */
+.recipeCard {
+  background: #0f172a;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+}
+
+.recipeCard.weekly {
+  --card-border: #334155;
+}
+
+.recipeCard.batch {
+  --card-border: #2dd4bf;
+}
+
+/* Recipe Header */
+.recipeHeader {
+  padding: 16px 20px;
+}
+
+.recipeHeader.weekly {
+  background: linear-gradient(135deg, #312e81, #1e1b4b);
+}
+
+.recipeHeader.batch {
+  background: linear-gradient(135deg, #134e4a, #0a2020);
+}
+
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.headerMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.recipeLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--label-color);
+}
+
+.batchBadge {
+  background: var(--teal-dark);
+  color: var(--teal-color);
+  border: 1px solid var(--teal-color);
+  border-radius: 10px;
+  padding: 1px 8px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.recipeName {
+  margin: 0;
+  color: var(--text-color);
+  font-size: 18px;
+}
+
+.headerInfo {
+  text-align: right;
+}
+
+.cuisineText {
+  color: var(--cuisine-color);
+  font-size: 12px;
+}
+
+.cookTime {
+  color: var(--dim-color);
+  font-size: 12px;
+}
+
+.calories {
+  color: var(--success-color);
+  font-size: 12px;
+}
+
+/* Recipe Grid */
+.recipeGrid {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Ingredients Section */
+.ingredientsTitle {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.ingredientsTitle.weekly {
+  color: #a78bfa;
+}
+
+.ingredientsTitle.batch {
+  color: #2dd4bf;
+}
+
+.ingredientsList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ingredientItem {
+  padding: 4px 0;
+  color: #cbd5e1;
+  font-size: 13px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.ingredientDot {
+  margin-right: 8px;
+}
+
+.ingredientDot.weekly {
+  color: #a78bfa;
+}
+
+.ingredientDot.batch {
+  color: #2dd4bf;
+}
+
+/* Workflow Section */
+.workflowTitle {
+  color: #34d399;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.workflowList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.workflowItem {
+  padding: 5px 0;
+  color: #cbd5e1;
+  font-size: 13px;
+  border-bottom: 1px solid #1e293b;
+}

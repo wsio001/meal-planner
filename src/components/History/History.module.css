@@ -1,0 +1,296 @@
+/* History Table Row */
+.historyRow {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.historyRow.disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.historyRow.selected {
+  background: var(--row-bg-selected);
+}
+
+.historyRow.hovered:not(.disabled) {
+  background: #162032;
+}
+
+/* Checkbox Column */
+.checkboxCell {
+  padding: 12px 0 12px 16px;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 2px solid var(--checkbox-border);
+  background: var(--checkbox-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkmark {
+  color: var(--checkmark-color);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Table Cells */
+.nameCell {
+  padding: 12px 16px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.cuisineCell {
+  padding: 12px 16px;
+}
+
+.cuisineBadge {
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 12px;
+  background: var(--badge-bg);
+  color: var(--badge-text);
+}
+
+.caloriesCell {
+  padding: 12px 16px;
+  color: var(--success-color);
+  font-size: 13px;
+}
+
+.caloriesEmpty {
+  color: var(--dimmer-color);
+}
+
+/* History Bar */
+.historyBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.historyBarInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.historyBarLabel {
+  color: var(--muted-color);
+  font-size: 13px;
+}
+
+.historyBarBadge {
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.historyBarButtons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Buttons */
+.clearButton {
+  background: transparent;
+  border: 1px solid var(--dimmer-color);
+  border-radius: 8px;
+  color: var(--muted-color);
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.primaryButton {
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.primaryButton:disabled {
+  cursor: not-allowed;
+  background: var(--border-color);
+}
+
+.deleteButton {
+  background: transparent;
+  border: 1px solid var(--danger-color);
+  border-radius: 8px;
+  color: var(--danger-color);
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.confirmRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.confirmText {
+  color: var(--warn-color);
+  font-size: 12px;
+}
+
+.confirmYesButton {
+  background: var(--danger-color);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.confirmCancelButton {
+  background: transparent;
+  border: 1px solid var(--dimmer-color);
+  border-radius: 8px;
+  color: var(--muted-color);
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Error Message */
+.errorMessage {
+  color: var(--warn-color);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+/* Selected Chips */
+.selectedChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.chip {
+  background: var(--chip-bg);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chipNumber {
+  color: var(--chip-accent);
+  font-weight: 700;
+}
+
+.chipClose {
+  cursor: pointer;
+  color: var(--chip-accent);
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  color: var(--dim-color);
+  padding: 40px;
+}
+
+/* Batch Cook Bar */
+.batchOffBar {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  color: var(--muted-color);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.batchOffBar strong {
+  color: #d6d3d1;
+}
+
+.batchOnBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.batchLabel {
+  color: var(--teal-text);
+  font-size: 13px;
+}
+
+.batchBadge {
+  background: var(--teal-color);
+  color: var(--teal-dark);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.clearRowContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+/* Sub Tab Bar */
+.subTabBar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.subTabButton {
+  flex: 1;
+  padding: 9px 12px;
+  border: none;
+  border-radius: 7px;
+  font-weight: 400;
+  font-size: 15px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--dim-color);
+}
+
+.subTabButton.active {
+  font-weight: 700;
+  color: #fff;
+  background: var(--tab-bg);
+}
+
+.tabBadge {
+  margin-left: 6px;
+  border-radius: 10px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--badge-bg);
+  color: var(--badge-text);
+}

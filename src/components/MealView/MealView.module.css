@@ -1,0 +1,228 @@
+/* MealView Container */
+.backButton {
+  background: transparent;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #94a3b8;
+  padding: 7px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.mealCard {
+  background: #1e293b;
+  border-radius: 16px;
+  border: 1px solid #334155;
+  overflow: hidden;
+}
+
+/* Tab Navigation */
+.tabBar {
+  display: flex;
+  border-bottom: 1px solid #334155;
+}
+
+.tabButton {
+  flex: 1;
+  padding: 14px 8px;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 400;
+  color: var(--tab-color);
+  border-bottom: 2px solid transparent;
+}
+
+.tabButton.active {
+  color: var(--purple-color);
+  font-weight: 700;
+  border-bottom: 2px solid var(--purple-color);
+}
+
+.tabContent {
+  padding: 24px;
+}
+
+/* Overview Tab */
+.overviewSection {
+  margin-bottom: 24px;
+}
+
+.overviewSection.noMargin {
+  margin-bottom: 0;
+}
+
+.overviewSectionTitle {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 12px;
+}
+
+.overviewSectionTitle.weekly {
+  color: #a78bfa;
+}
+
+.overviewSectionTitle.batch {
+  color: #2dd4bf;
+}
+
+.overviewStack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.overviewCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0f172a;
+  border-radius: 10px;
+  padding: 14px 18px;
+  border: 1px solid #334155;
+}
+
+.overviewCard.batch {
+  border: 1px solid #2dd4bf;
+}
+
+.overviewRight {
+  display: flex;
+  gap: 8px;
+}
+
+.recipeNumber {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.recipeNumber.batch {
+  color: var(--teal-text);
+}
+
+.recipeName {
+  color: var(--muted-color);
+  margin-left: 8px;
+}
+
+.tag {
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 12px;
+}
+
+.tag.weekly {
+  background: #312e81;
+  color: #a5b4fc;
+}
+
+.tag.batch {
+  background: #134e4a;
+  color: #99f6e4;
+}
+
+.tag.calories {
+  background: #1e293b;
+  color: #34d399;
+}
+
+/* Grocery Tab */
+.groceryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.groceryTitle {
+  color: #e2e8f0;
+  font-size: 16px;
+  margin: 0;
+}
+
+.copyButton {
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--copy-bg);
+  color: var(--copy-color);
+  border: 1px solid var(--copy-border);
+}
+
+.groceryNote {
+  margin-bottom: 12px;
+  padding: 8px 14px;
+  background: #134e4a;
+  border: 1px solid #2dd4bf;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #99f6e4;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.tableHeader {
+  background: #0f172a;
+}
+
+.tableHeaderCell {
+  padding: 10px 12px;
+  text-align: left;
+  color: #64748b;
+  font-weight: 600;
+  border-bottom: 1px solid #334155;
+}
+
+.tableRow {
+  border-bottom: 1px solid var(--bg-color);
+}
+
+.cellType {
+  padding: 9px 12px;
+  color: #a78bfa;
+  font-size: 12px;
+}
+
+.cellText {
+  padding: 9px 12px;
+  color: #f1f5f9;
+  font-weight: 500;
+}
+
+.cellMuted {
+  padding: 9px 12px;
+  color: #94a3b8;
+}
+
+.cellDim {
+  padding: 9px 12px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+/* Recipes Tab */
+.recipesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.recipeStack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

@@ -10,12 +10,15 @@ export function parseTabFormat(text) {
   raw1.trim().split('\n').forEach(l => { l=l.trim(); if(!l) return; const p=l.split('\t'); if(p.length>=2) overview.push([p[0].trim(),p[1].trim()]); });
   const grocery = [];
   const iph = { Produce:[], 'Protein/Meat':[], Grains:[], Dairy:[], 'Pantry/Spices':[] };
+  const categoryLookup = {}; // Map ingredient item to category
   raw2.trim().split('\n').forEach(l => {
     l=l.trim(); if(!l) return;
     const p=l.split(/\t|  +/);
     if(p.length>=4) {
       const [type,item,qty,...rest]=p.map(s=>s.trim());
       grocery.push([type,item,qty,rest.join(' ')]);
+      // Store category for this ingredient item (normalized to lowercase)
+      categoryLookup[item.toLowerCase()] = type;
       const entry=item+' - '+qty;
       if(type==='Produce') iph['Produce'].push(entry);
       else if(type==='Protein/Meat') iph['Protein/Meat'].push(entry);
@@ -37,7 +40,11 @@ export function parseTabFormat(text) {
       if(/^calories:/i.test(l))         { r.caloriesPerServing=parseInt(l.replace(/^calories:\s*/i,''))||0; return; }
       if(/^INGREDIENTS/i.test(l))       { mode='ingredients'; return; }
       if(/^OPTIMIZED COOKING/i.test(l)) { mode='workflow'; return; }
-      if(mode==='ingredients') r.ingredients.push(l);
+      if(mode==='ingredients') {
+        // Try to find category from grocery list
+        const category = findCategory(l, categoryLookup);
+        r.ingredients.push({ text: l, category });
+      }
       else if(mode==='workflow') r.workflow.push(l);
     });
     if(r.name) recipes.push(r);
@@ -45,8 +52,36 @@ export function parseTabFormat(text) {
   return { overview, grocery, recipes, iphoneNotes: iph };
 }
 
+// Helper to find category for an ingredient by matching against grocery items
+function findCategory(ingredientText, categoryLookup) {
+  const lower = ingredientText.toLowerCase();
+  // Try to find a match in the category lookup
+  for (const [item, category] of Object.entries(categoryLookup)) {
+    if (lower.includes(item)) {
+      return category;
+    }
+  }
+  // Fallback to undefined if not found
+  return undefined;
+}
+
 export function safeR(r, i, isBatch) {
   const name = (r && r.name) ? r.name : 'Recipe ' + (i + 1);
+  // Normalize ingredients to always be objects with { text, category }
+  let ingredients = [];
+  if (r && Array.isArray(r.ingredients)) {
+    ingredients = r.ingredients.map(ing => {
+      // If already an object with text property, return as-is
+      if (typeof ing === 'object' && ing.text) {
+        return ing;
+      }
+      // If it's a string (old format), convert to object
+      if (typeof ing === 'string') {
+        return { text: ing, category: undefined };
+      }
+      return { text: String(ing || ''), category: undefined };
+    });
+  }
   return {
     id: name + '_' + i,
     number: (r && r.number) ? r.number : i + 1,
@@ -54,7 +89,7 @@ export function safeR(r, i, isBatch) {
     cuisine: (r && r.cuisine) ? r.cuisine : 'Unknown',
     cookTime: (r && r.cookTime) ? r.cookTime : '30 mins',
     caloriesPerServing: (r && r.caloriesPerServing) ? r.caloriesPerServing : '—',
-    ingredients: (r && Array.isArray(r.ingredients)) ? r.ingredients : [],
+    ingredients,
     workflow: (r && Array.isArray(r.workflow)) ? r.workflow : [],
     isBatchCook: isBatch || false,
   };
