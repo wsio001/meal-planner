@@ -6,19 +6,18 @@ import { useElapsed, usePersistedState } from './hooks';
 import { ErrorBoundary } from './components/ui';
 import { TabView } from './components/TabView/TabView';
 import { HeaderView } from './components/HeaderView/HeaderView';
-import { PromptView } from './components/PromptView/PromptView';
-import { RecreateRecipesView } from './components/RecreateRecipesView/RecreateRecipesView';
 import { APIMissingView } from './components/APIMissingView/APIMissingView';
+import { LoadingModal } from './components/LoadingModal/LoadingModal';
 import { DEFAULTS, STORAGE_KEYS, UI_CONFIG, API_CONFIG } from './config';
 
 function MealPlanner() {
   const [loading, setLoading] = useState(false);
+  const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [stage, setStage] = useState('');
   const [progress, setProgress] = useState([]);
   const [mealData, setMealData] = usePersistedState(STORAGE_KEYS.CURRENT_MEAL_PLAN, null, 'v1');
   const [error, setError] = useState('');
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [currentPage, setCurrentPage] = useState('thisweek');
   const [selectedWeekly, setSelectedWeekly] = useState([]);
 
   const [apiKey, setApiKey, apiKeyLoaded] = usePersistedState(STORAGE_KEYS.SETTINGS_API_KEY, '', 'v1');
@@ -56,17 +55,21 @@ function MealPlanner() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  async function generate(special) {
+  async function generate(special, skipLoadingModal = false) {
     if (abortRef.current) abortRef.current.abort();
     abortRef.current = new AbortController();
     const signal = abortRef.current.signal;
-    setLoading(true); setError(''); setMealData(null);
+    setLoading(true);
+    setShowLoadingModal(!skipLoadingModal);
+    setError('');
+    setMealData(null);
     const batchNeed = isBatchEnabled ? Math.max(0, numBatch-selectedBatch.length) : 0;
-    const totalSlots = numDinners + batchNeed;
+    const needToGenerate = Math.max(0, numDinners - selectedWeekly.length);
+    const totalSlots = needToGenerate + batchNeed;
     setProgress(Array(totalSlots).fill(false));
-    setStage('Generating recipes...');
+    setStage(needToGenerate === 0 ? 'Loading meals...' : 'Generating recipes...');
     try {
-      const cuisines = pickCuisines(numDinners);
+      const cuisines = pickCuisines(needToGenerate);
       const userSpecial = special.trim();
       const chunks = chunkArr(cuisines, 2);
       let recipeBaseIdx = 0;
@@ -125,27 +128,52 @@ function MealPlanner() {
       const wParsed = mergeParsedArray(weeklyResults);
       setStage('Organizing...');
       setProgress(Array(totalSlots).fill(true));
-      const combined = combineParsed(wParsed, bParsed, isBatchEnabled?selectedBatch:[]);
-      setMealData(combined);
+
+      // Combine newly generated recipes with selected weekly recipes
+      const allWeeklyRecipes = [...selectedWeekly, ...(wParsed.recipes || [])];
+      const combinedWeekly = {
+        recipes: allWeeklyRecipes,
+        grocery: wParsed.grocery || [],
+        iphoneNotes: wParsed.iphoneNotes || {}
+      };
+      const combined = combineParsed(combinedWeekly, bParsed, isBatchEnabled?selectedBatch:[]);
+
       await saveRecipesBatched(
-        combined.recipes.filter(r=>!r.isBatchCook),
+        combined.recipes.filter(r=>!r.isBatchCook&&!selectedWeekly.some(s=>s.name===r.name)),
         combined.recipes.filter(r=>r.isBatchCook&&!selectedBatch.some(s=>s.name===r.name))
       );
-    } catch(e) { if(e.name!=='AbortError') setError('Something went wrong: '+e.message); }
+
+      // Add delay before closing modal and showing results (skip if no loading modal)
+      if (!skipLoadingModal) {
+        await new Promise(resolve => setTimeout(resolve, 800));
+      }
+      setMealData(combined);
+      setShowLoadingModal(false);
+    } catch(e) {
+      if(e.name!=='AbortError') {
+        setError('Something went wrong: '+e.message);
+        setShowLoadingModal(false);
+      }
+    }
     setLoading(false); setStage('');
   }
 
   const handleViewHistoryMeal = useCallback((mealPlan) => {
     setMealData(mealPlan);
-    setCurrentPage('thisweek'); // Switch to This Week tab when viewing a meal plan
   }, [setMealData]);
 
-  const handleRecreate = useCallback(() => {
-    // This will use the buildPlan logic from WeeklyHistorySubTab
-    // For now, just switch to This Week tab - the actual generation
-    // happens in the HistoryTab component
-    setCurrentPage('thisweek');
-  }, []);
+  const handleRecreate = useCallback(async () => {
+    // Special case: if needFill = 0 (all meals are reused), skip loading modal
+    const needFill = numDinners - selectedWeekly.length;
+    if (needFill === 0) {
+      // Fast retrieval - no loading modal needed
+      await generate('', true);
+    } else {
+      // Normal generation with loading modal
+      await generate('', false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numDinners, selectedWeekly.length]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -195,37 +223,6 @@ function MealPlanner() {
               setApiKey={setApiKey}
             />
 
-            {currentPage === 'thisweek' ? (
-              <PromptView
-                onGenerate={generate}
-                loading={loading}
-                stage={stage}
-                elapsed={elapsed}
-                progress={progress}
-                numDinners={numDinners}
-                error={error}
-                customRules={customRules}
-                setCustomRules={setCustomRules}
-                numPeople={numPeople}
-                calories={calories}
-                rulesLoaded={rulesLoaded}
-                isBatchEnabled={isBatchEnabled}
-              />
-            ) : (
-              <RecreateRecipesView
-                selectedCount={selectedWeekly.length}
-                numDinners={numDinners}
-                onRecreate={handleRecreate}
-                disabled={loading}
-                customRules={customRules}
-                setCustomRules={setCustomRules}
-                numPeople={numPeople}
-                calories={calories}
-                rulesLoaded={rulesLoaded}
-              />
-            )}
-
-            {/* Tab View */}
             <TabView
               mealData={mealData}
               numDinners={numDinners}
@@ -236,11 +233,16 @@ function MealPlanner() {
               numBatchCook={numBatch}
               selectedBatch={selectedBatch}
               setSelectedBatch={setSelectedBatch}
-              onViewMealPlan={handleViewHistoryMeal}
-              onPageChange={setCurrentPage}
               selectedWeekly={selectedWeekly}
               setSelectedWeekly={setSelectedWeekly}
               apiKey={apiKey}
+              onGenerate={generate}
+              onRecreate={handleRecreate}
+              loading={loading}
+              error={error}
+              setCustomRules={setCustomRules}
+              rulesLoaded={rulesLoaded}
+              isBatchEnabled={isBatchEnabled}
             />
           </>
         )}
@@ -280,6 +282,14 @@ function MealPlanner() {
           ↑
         </button>
       )}
+
+      <LoadingModal
+        isOpen={showLoadingModal}
+        stage={stage}
+        elapsed={elapsed}
+        progress={progress}
+        numDinners={numDinners}
+      />
     </div>
   );
 }

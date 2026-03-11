@@ -2,16 +2,11 @@ import { useState } from 'react';
 import { C } from '../../constants';
 import { GenerateButton } from '../ui';
 import { RulesEditor } from '../RulesEditor/RulesEditor';
-import { UI_CONFIG } from '../../config';
 import styles from './PromptView.module.css';
 
 export function PromptView({
   onGenerate,
   loading,
-  stage,
-  elapsed,
-  progress,
-  numDinners,
   error,
   customRules,
   setCustomRules,
@@ -48,34 +43,6 @@ export function PromptView({
         className={styles.specialRequestTextarea}
       />
       <GenerateButton onClick={() => onGenerate(specialRequest)} label={buttonLabel} disabled={loading} />
-
-      {loading && (
-        <div className={styles.progressSection}>
-          <div className={styles.progressMeta}>
-            <p className={styles.progressText}>{stage + ' (' + elapsed + 's)'}</p>
-            <div className={styles.progressBar}>
-              <div
-                className={styles.progressBarFill}
-                style={{ width: Math.min((elapsed / UI_CONFIG.PROGRESS_DENOMINATOR) * 100, UI_CONFIG.PROGRESS_MAX_PERCENT) + '%' }}
-              />
-            </div>
-          </div>
-          <div className={styles.progressRow}>
-            {progress.map((done, i) => {
-              const isBatch = i >= numDinners;
-              const itemClass = `${styles.progressItem} ${
-                done ? (isBatch ? styles.doneBatch : styles.done) : styles.pending
-              }`;
-              return (
-                <div key={i} className={itemClass}>
-                  {done ? '✓' : '⏳'}{' '}
-                  {isBatch ? 'Batch ' + (i - numDinners + 1) : 'Recipe ' + (i + 1)}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {error && <p className={styles.errorMessage}>{error}</p>}
 

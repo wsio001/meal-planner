@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { C } from '../../constants';
 import { Setting } from '../Setting/Setting';
+import { Modal } from '../Modal/Modal';
 import styles from './HeaderView.module.css';
 
 export function HeaderView({
@@ -48,7 +49,7 @@ export function HeaderView({
         </button>
       </div>
 
-      {showSettings && (
+      <Modal isOpen={showSettings} onClose={() => setShowSettings(false)}>
         <Setting
           numDinners={numDinners}
           setNumDinners={setNumDinners}
@@ -67,7 +68,7 @@ export function HeaderView({
           setApiKey={setApiKey}
           onClose={() => setShowSettings(false)}
         />
-      )}
+      </Modal>
     </>
   );
 }

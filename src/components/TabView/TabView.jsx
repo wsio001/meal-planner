@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { C } from '../../constants';
 import { ThisWeekTab } from '../ThisWeekTab/ThisWeekTab';
 import { HistoryTab } from '../History/History';
+import { PromptView } from '../PromptView/PromptView';
+import { RecreateRecipesView } from '../RecreateRecipesView/RecreateRecipesView';
 import styles from './TabView.module.css';
 
 export function TabView({
@@ -14,17 +16,27 @@ export function TabView({
   numBatchCook,
   selectedBatch,
   setSelectedBatch,
-  onViewMealPlan,
-  onPageChange,
   selectedWeekly,
   setSelectedWeekly,
-  apiKey
+  apiKey,
+  // Props for generation
+  onGenerate,
+  onRecreate,
+  loading,
+  error,
+  setCustomRules,
+  rulesLoaded,
+  isBatchEnabled
 }) {
   const [page, setPage] = useState('thisweek');
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
-    if (onPageChange) onPageChange(newPage);
+  };
+
+  const handleViewMealPlan = (mealPlan) => {
+    // When viewing a meal plan from history, switch to This Week tab
+    setPage('thisweek');
   };
 
   const cssVars = {
@@ -48,23 +60,51 @@ export function TabView({
         ))}
       </div>
 
-      {page === 'thisweek' && <ThisWeekTab mealData={mealData} />}
+      {page === 'thisweek' && (
+        <>
+          <PromptView
+            onGenerate={onGenerate}
+            loading={loading}
+            error={error}
+            customRules={customRules}
+            setCustomRules={setCustomRules}
+            numPeople={numPeople}
+            calories={calories}
+            rulesLoaded={rulesLoaded}
+            isBatchEnabled={isBatchEnabled}
+          />
+          <ThisWeekTab mealData={mealData} />
+        </>
+      )}
 
       {page === 'history' && (
-        <HistoryTab
-          numDinners={numDinners}
-          numPeople={numPeople}
-          calories={calories}
-          customRules={customRules}
-          batchCookEnabled={batchCookEnabled}
-          numBatchCook={numBatchCook}
-          selectedBatch={selectedBatch}
-          setSelectedBatch={setSelectedBatch}
-          onViewMealPlan={onViewMealPlan}
-          selectedWeekly={selectedWeekly}
-          setSelectedWeekly={setSelectedWeekly}
-          apiKey={apiKey}
-        />
+        <>
+          <RecreateRecipesView
+            selectedCount={selectedWeekly.length}
+            numDinners={numDinners}
+            onRecreate={onRecreate}
+            disabled={loading}
+            customRules={customRules}
+            setCustomRules={setCustomRules}
+            numPeople={numPeople}
+            calories={calories}
+            rulesLoaded={rulesLoaded}
+          />
+          <HistoryTab
+            numDinners={numDinners}
+            numPeople={numPeople}
+            calories={calories}
+            customRules={customRules}
+            batchCookEnabled={batchCookEnabled}
+            numBatchCook={numBatchCook}
+            selectedBatch={selectedBatch}
+            setSelectedBatch={setSelectedBatch}
+            onViewMealPlan={handleViewMealPlan}
+            selectedWeekly={selectedWeekly}
+            setSelectedWeekly={setSelectedWeekly}
+            apiKey={apiKey}
+          />
+        </>
       )}
     </div>
   );

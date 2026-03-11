@@ -30,6 +30,7 @@ export function Setting({
   const [localNumBatch, setLocalNumBatch] = useState(numBatch);
   const [localBatchServings, setLocalBatchServings] = useState(batchServings);
   const [localApiKey, setLocalApiKey] = useState(apiKey);
+  const [isSaved, setIsSaved] = useState(false);
 
   // Sync local state when props change (e.g., when reopening Settings)
   useEffect(() => {
@@ -50,9 +51,17 @@ export function Setting({
     setNumBatch(localNumBatch);
     setBatchServings(localBatchServings);
     setApiKey(localApiKey);
-    if (onClose) {
-      onClose();
-    }
+
+    // Show saved state
+    setIsSaved(true);
+
+    // Close modal after delay
+    setTimeout(() => {
+      setIsSaved(false);
+      if (onClose) {
+        onClose();
+      }
+    }, 1500);
   };
 
   const toggleContainerClass = `${styles.toggleContainer} ${localIsBatchEnabled ? styles.on : styles.off}`;
@@ -75,8 +84,13 @@ export function Setting({
       <div className={styles.settingsHeader}>
         <p className={styles.settingsTitle}>Settings</p>
         {onClose && (
-          <button onClick={handleSave} className={styles.saveButton} style={cssVars}>
-            ✓ Save
+          <button
+            onClick={handleSave}
+            className={`${styles.saveButton} ${isSaved ? styles.saved : ''}`}
+            style={cssVars}
+            disabled={isSaved}
+          >
+            {isSaved ? '✓ Saved' : '✓ Save'}
           </button>
         )}
       </div>
