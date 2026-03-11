@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { C, S } from '../../constants';
-import { loadRecipes, saveRecipesBatched, combineParsed, parseTabFormat } from '../../data';
-import { callClaude, buildPrompt } from '../../api';
+import { loadRecipes } from '../../data';
 import { storage } from '../../storage';
 import styles from './History.module.css';
 
@@ -131,10 +130,9 @@ const HistoryTable = React.memo(function HistoryTable({ rows, selected, onToggle
   );
 });
 
-function WeeklyHistorySubTab({ numDinners, numPeople, calories, customRules, onViewMealPlan, selectedWeekly, setSelectedWeekly, apiKey }) {
+function WeeklyHistorySubTab({ numDinners, selectedWeekly, setSelectedWeekly }) {
   const [all, setAll] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filling, setFilling] = useState(false);
   const [fillErr, setFillErr] = useState('');
   const [confirmClear, setConfirmClear] = useState(false);
   useEffect(() => { loadRecipes('recipes:all').then(r=>{ setAll(r); setLoading(false); }); }, []);
@@ -142,40 +140,6 @@ function WeeklyHistorySubTab({ numDinners, numPeople, calories, customRules, onV
   const toggleSel = useCallback(r => {
     setSelectedWeekly(prev=>prev.some(x=>x.name===r.name)?prev.filter(x=>x.name!==r.name):prev.length<numDinners?[...prev,r]:prev);
   }, [numDinners, setSelectedWeekly]);
-
-  const buildPlan = useCallback(async () => {
-    const need=numDinners-selectedWeekly.length;
-    if(need===0){
-      // Generate grocery list from selected recipes
-      const { grocery: selectedGrocery, iphoneNotes: selectedNotes } = recipesToGrocery(selectedWeekly);
-      const mealPlan = combineParsed(
-        {recipes:selectedWeekly.map(r=>({...r,isBatchCook:false})),grocery:selectedGrocery,iphoneNotes:selectedNotes},
-        {recipes:[],grocery:[],iphoneNotes:{}},
-        []
-      );
-      onViewMealPlan(mealPlan);
-      return;
-    }
-    setFilling(true);setFillErr('');
-    try {
-      const sp=selectedWeekly.length?'Already have: '+selectedWeekly.map(r=>r.name).join(', ')+'. Pick '+need+' complementary recipe(s).':'';
-      const p=buildPrompt(need,numPeople,calories,sp,customRules,false);
-      const parsed=parseTabFormat(await callClaude(p.system,p.user,null,apiKey));
-      const newR=(parsed.recipes||[]).map(r=>({...r,isBatchCook:false}));
-      await saveRecipesBatched(newR.filter(r=>!selectedWeekly.some(s=>s.name===r.name)),[]);
-      setAll(prev=>{const names=new Set(prev.map(r=>r.name.toLowerCase()));return [...prev,...newR.filter(r=>!names.has(r.name.toLowerCase()))];});
-
-      // Generate grocery list from selected recipes and merge with new recipes' grocery
-      const { grocery: selectedGrocery, iphoneNotes: selectedNotes } = recipesToGrocery(selectedWeekly);
-      const mealPlan = combineParsed(
-        {recipes:[...selectedWeekly.map(r=>({...r,isBatchCook:false})),...newR],grocery:[...selectedGrocery,...(parsed.grocery||[])],iphoneNotes:selectedNotes},
-        {recipes:[],grocery:[],iphoneNotes:parsed.iphoneNotes||{}},
-        []
-      );
-      onViewMealPlan(mealPlan);
-    } catch(e){setFillErr('Failed: '+e.message);}
-    setFilling(false);
-  }, [numDinners,numPeople,calories,customRules,selectedWeekly,onViewMealPlan,apiKey]);
 
   const clearAll = useCallback(async () => {
     try{await storage.delete('recipes:all');}catch(e){}
@@ -201,26 +165,27 @@ function WeeklyHistorySubTab({ numDinners, numPeople, calories, customRules, onV
         <div className={styles.historyBarInfo}>
           <span className={styles.historyBarLabel}>{'Select up to '+numDinners+' recipes'}</span>
           <span className={styles.historyBarBadge}>{selectedWeekly.length+' / '+numDinners}</span>
+          {selectedWeekly.length>0&&<button onClick={()=>setSelectedWeekly([])} className={styles.clearButton}>Clear Selection</button>}
         </div>
         <div className={styles.historyBarButtons}>
-          {selectedWeekly.length>0&&<button onClick={()=>setSelectedWeekly([])} className={styles.clearButton}>Clear</button>}
-          {selectedWeekly.length>0&&<button onClick={buildPlan} disabled={filling} className={styles.primaryButton}>{filling?'⏳ Generating...':selectedWeekly.length===numDinners?'✨ View Meal Plan':'✨ Fill '+(numDinners-selectedWeekly.length)+' with AI'}</button>}
           {confirmClear
             ?<div className={styles.confirmRow}><span className={styles.confirmText}>Sure?</span><button onClick={clearAll} className={styles.confirmYesButton}>Yes</button><button onClick={()=>setConfirmClear(false)} className={styles.confirmCancelButton}>Cancel</button></div>
-            :<button onClick={()=>setConfirmClear(true)} className={styles.deleteButton}>🗑 Clear All</button>}
+            :<button onClick={()=>setConfirmClear(true)} className={styles.deleteButton}>🗑 Delete History</button>}
         </div>
       </div>
       {fillErr&&<p className={styles.errorMessage}>{fillErr}</p>}
-      {selectedWeekly.length>0&&(
-        <div className={styles.selectedChips} style={{'--chip-bg': C.accentBg, '--chip-accent': C.accent}}>
-          {selectedWeekly.map((r,i)=>(
+      <div className={styles.selectedChips} style={{'--chip-bg': C.accentBg, '--chip-accent': C.accent}}>
+        {selectedWeekly.length > 0 ? (
+          selectedWeekly.map((r,i)=>(
             <div key={r.id||r.name+'_'+i} className={styles.chip}>
               <span className={styles.chipNumber}>{'#'+(i+1)}</span>{' '+r.name}
               <span onClick={()=>toggleSel(r)} className={styles.chipClose}>×</span>
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        ) : (
+          <div style={{ minHeight: '38px' }} />
+        )}
+      </div>
       <HistoryTable rows={all} selected={selectedWeekly} onToggle={toggleSel} maxSelect={numDinners} acColor={C.accent} acBg={C.accentBg} acText={C.accentText} checkDark={false} disabled={false} />
     </div>
   );
@@ -272,23 +237,27 @@ function BatchCookHistorySubTab({ batchCookEnabled, numBatchCook, selectedBatch,
           <div className={styles.historyBarInfo}>
             <span className={styles.batchLabel}>{'Select up to '+numBatchCook+' batch recipe'+(numBatchCook>1?'s':'')}</span>
             <span className={styles.batchBadge}>{selectedBatch.length+' / '+numBatchCook}</span>
+             {selectedBatch.length>0&&<button onClick={()=>setSelectedBatch([])} className={styles.clearButton}>Clear Selections</button>}
           </div>
           <div className={styles.historyBarButtons}>
-            {selectedBatch.length>0&&<button onClick={()=>setSelectedBatch([])} className={styles.clearButton}>Clear</button>}
             {confirmClear
               ?<div className={styles.confirmRow}><span className={styles.confirmText}>Sure?</span><button onClick={clearAll} className={styles.confirmYesButton}>Yes</button><button onClick={()=>setConfirmClear(false)} className={styles.confirmCancelButton}>Cancel</button></div>
-              :<button onClick={()=>setConfirmClear(true)} className={styles.deleteButton}>🗑 Clear All</button>}
+              :<button onClick={()=>setConfirmClear(true)} className={styles.deleteButton}>🗑 Delete History</button>}
           </div>
         </div>
       )}
-      {batchCookEnabled&&selectedBatch.length>0&&(
+      {batchCookEnabled&&(
         <div className={styles.selectedChips}>
-          {selectedBatch.map((r,i)=>(
-            <div key={r.id||r.name+'_'+i} className={styles.chip}>
-              <span className={styles.chipNumber}>{'#'+(i+1)}</span>{' '+r.name}
-              <span onClick={()=>toggleSel(r)} className={styles.chipClose}>×</span>
-            </div>
-          ))}
+          {selectedBatch.length > 0 ? (
+            selectedBatch.map((r,i)=>(
+              <div key={r.id||r.name+'_'+i} className={styles.chip}>
+                <span className={styles.chipNumber}>{'#'+(i+1)}</span>{' '+r.name}
+                <span onClick={()=>toggleSel(r)} className={styles.chipClose}>×</span>
+              </div>
+            ))
+          ) : (
+            <div style={{ minHeight: '38px' }} />
+          )}
         </div>
       )}
       <HistoryTable rows={all} selected={selectedBatch} onToggle={toggleSel} maxSelect={numBatchCook} acColor={C.teal} acBg={C.tealBg} acText={C.tealText} checkDark={true} disabled={!batchCookEnabled} />

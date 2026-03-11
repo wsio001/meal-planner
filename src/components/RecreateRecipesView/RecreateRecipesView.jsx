@@ -1,16 +1,24 @@
 import React from 'react';
 import { C } from '../../constants';
-import { GenerateButton } from '../ui';
+import { GenerateButton, HistoryMealsCounter } from '../ui';
+import { RulesEditor } from '../RulesEditor/RulesEditor';
 import styles from './RecreateRecipesView.module.css';
 
 export function RecreateRecipesView({
   selectedCount,
   numDinners,
   onRecreate,
-  disabled
+  disabled,
+  customRules,
+  setCustomRules,
+  numPeople,
+  calories,
+  rulesLoaded
 }) {
   const needToFill = numDinners - selectedCount;
-  const buttonLabel = needToFill === 0
+  const buttonLabel = selectedCount === 0
+    ? '✨ Cook Without History'
+    : needToFill === 0
     ? '✨ Recreate Meals'
     : `✨ Fill ${needToFill} meal${needToFill > 1 ? 's' : ''} with AI`;
 
@@ -21,20 +29,26 @@ export function RecreateRecipesView({
 
   return (
     <div className={styles.recreatePanel} style={cssVars}>
-      <div className={styles.infoSection}>
-        <p className={styles.infoText}>
-          {selectedCount === 0
-            ? 'Select recipes from the Weekly history tab below to recreate your meal plan'
-            : selectedCount === numDinners
-            ? `You've selected ${selectedCount} recipe${selectedCount > 1 ? 's' : ''}. Ready to recreate your meal plan!`
-            : `You've selected ${selectedCount} recipe${selectedCount > 1 ? 's' : ''}. We'll fill the remaining ${needToFill} with AI-generated recipes.`}
-        </p>
-      </div>
+      <label className={styles.instructionLabel}>
+        Select from below to reuse recipes
+      </label>
+
+      <HistoryMealsCounter selectedCount={selectedCount} numDinners={numDinners} />
+
       <GenerateButton
         onClick={onRecreate}
         label={buttonLabel}
-        disabled={disabled || selectedCount === 0}
+        disabled={disabled}
       />
+
+      {rulesLoaded && (
+        <RulesEditor
+          customRules={customRules}
+          setCustomRules={setCustomRules}
+          numPeople={numPeople}
+          calories={calories}
+        />
+      )}
     </div>
   );
 }

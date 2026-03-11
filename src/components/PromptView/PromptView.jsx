@@ -1,12 +1,11 @@
-import React from 'react';
+import { useState } from 'react';
 import { C } from '../../constants';
-import { SpecialRequestInput } from '../ui';
+import { GenerateButton } from '../ui';
 import { RulesEditor } from '../RulesEditor/RulesEditor';
 import styles from './PromptView.module.css';
 
 export function PromptView({
   onGenerate,
-  buttonLabel,
   loading,
   stage,
   elapsed,
@@ -17,16 +16,37 @@ export function PromptView({
   setCustomRules,
   numPeople,
   calories,
-  rulesLoaded
+  rulesLoaded,
+  batchEnabled
 }) {
+  const [specialRequest, setSpecialRequest] = useState('');
+
+  const buttonLabel = loading
+    ? '✨ Cooking...'
+    : '✨ Hit Me With A Plan ( Meals' + (batchEnabled ? ' + Batch )' : ' Only )');
+
   const cssVars = {
     '--dim-color': C.dim,
-    '--warn-color': C.warn
+    '--warn-color': C.warn,
+    '--muted-color': C.muted,
+    '--dimmer-color': C.dimmer,
+    '--bg-color': C.bg,
+    '--text-color': C.text,
+    '--border-color': C.border
   };
 
   return (
     <div className={styles.generatePanel} style={cssVars}>
-      <SpecialRequestInput onSubmit={onGenerate} buttonLabel={buttonLabel} disabled={loading} />
+      <label className={styles.specialRequestLabel}>
+        One-time special requests <span className={styles.specialRequestOptional}>(optional)</span>
+      </label>
+      <textarea
+        value={specialRequest}
+        onChange={e => setSpecialRequest(e.target.value)}
+        placeholder='e.g. "one meal should be steak and egg", "help me use the salmon in my fridge"'
+        className={styles.specialRequestTextarea}
+      />
+      <GenerateButton onClick={() => onGenerate(specialRequest)} label={buttonLabel} disabled={loading} />
 
       {loading && (
         <div className={styles.progressSection}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { C } from '../../constants';
 import { PickerRow, CalorieInput } from '../ui';
 import styles from './Setting.module.css';
@@ -21,11 +21,44 @@ export function Setting({
   setApiKey,
   onClose
 }) {
-  const toggleContainerClass = `${styles.toggleContainer} ${batchEnabled ? styles.on : styles.off}`;
-  const toggleLabelClass = `${styles.toggleLabel} ${batchEnabled ? styles.on : styles.off}`;
-  const toggleStatusClass = `${styles.toggleStatus} ${batchEnabled ? styles.on : styles.off}`;
-  const toggleTrackClass = `${styles.toggleTrack} ${batchEnabled ? styles.on : styles.off}`;
-  const toggleThumbClass = `${styles.toggleThumb} ${batchEnabled ? styles.on : styles.off}`;
+  // Local state for settings (not saved until Save button is clicked)
+  const [localNumDinners, setLocalNumDinners] = useState(numDinners);
+  const [localNumPeople, setLocalNumPeople] = useState(numPeople);
+  const [localCalories, setLocalCalories] = useState(calories);
+  const [localBatchEnabled, setLocalBatchEnabled] = useState(batchEnabled);
+  const [localNumBatch, setLocalNumBatch] = useState(numBatch);
+  const [localBatchServings, setLocalBatchServings] = useState(batchServings);
+  const [localApiKey, setLocalApiKey] = useState(apiKey);
+
+  // Sync local state when props change (e.g., when reopening Settings)
+  useEffect(() => {
+    setLocalNumDinners(numDinners);
+    setLocalNumPeople(numPeople);
+    setLocalCalories(calories);
+    setLocalBatchEnabled(batchEnabled);
+    setLocalNumBatch(numBatch);
+    setLocalBatchServings(batchServings);
+    setLocalApiKey(apiKey);
+  }, [numDinners, numPeople, calories, batchEnabled, numBatch, batchServings, apiKey]);
+
+  const handleSave = () => {
+    setNumDinners(localNumDinners);
+    setNumPeople(localNumPeople);
+    setCalories(localCalories);
+    setBatchEnabled(localBatchEnabled);
+    setNumBatch(localNumBatch);
+    setBatchServings(localBatchServings);
+    setApiKey(localApiKey);
+    if (onClose) {
+      onClose();
+    }
+  };
+
+  const toggleContainerClass = `${styles.toggleContainer} ${localBatchEnabled ? styles.on : styles.off}`;
+  const toggleLabelClass = `${styles.toggleLabel} ${localBatchEnabled ? styles.on : styles.off}`;
+  const toggleStatusClass = `${styles.toggleStatus} ${localBatchEnabled ? styles.on : styles.off}`;
+  const toggleTrackClass = `${styles.toggleTrack} ${localBatchEnabled ? styles.on : styles.off}`;
+  const toggleThumbClass = `${styles.toggleThumb} ${localBatchEnabled ? styles.on : styles.off}`;
 
   const cssVars = {
     '--teal-color': C.teal,
@@ -41,7 +74,7 @@ export function Setting({
       <div className={styles.settingsHeader}>
         <p className={styles.settingsTitle}>Settings</p>
         {onClose && (
-          <button onClick={onClose} className={styles.saveButton} style={cssVars}>
+          <button onClick={handleSave} className={styles.saveButton} style={cssVars}>
             ✓ Save
           </button>
         )}
@@ -52,8 +85,8 @@ export function Setting({
         <label className={styles.apiKeyLabel}>🔑 Anthropic API Key</label>
         <input
           type="password"
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
+          value={localApiKey}
+          onChange={(e) => setLocalApiKey(e.target.value)}
           placeholder="sk-ant-..."
           className={styles.apiKeyInput}
         />
@@ -63,19 +96,19 @@ export function Setting({
       </div>
 
       <div className={styles.settingsRow}>
-        <PickerRow label="🍽️ Dinners / week" value={numDinners} setValue={setNumDinners} options={[2,3,4,5,6,7]} />
-        <PickerRow label="👥 People / dinner" value={numPeople} setValue={setNumPeople} options={[1,2,3,4,5,6]} />
-        <CalorieInput calories={calories} setCalories={setCalories} />
+        <PickerRow label="🍽️ Dinners / week" value={localNumDinners} setValue={setLocalNumDinners} options={[2,3,4,5,6,7]} />
+        <PickerRow label="👥 People / dinner" value={localNumPeople} setValue={setLocalNumPeople} options={[1,2,3,4,5,6]} />
+        <CalorieInput calories={localCalories} setCalories={setLocalCalories} />
       </div>
       <div className={styles.settingsDivider}>
         <div className={styles.batchSettings}>
-          <div onClick={() => setBatchEnabled(v => !v)} className={toggleContainerClass} style={cssVars}>
+          <div onClick={() => setLocalBatchEnabled(v => !v)} className={toggleContainerClass} style={cssVars}>
             <div>
               <span className={toggleLabelClass}>🍲 Batch Cook</span>
               <span className={toggleStatusClass}>
-                {batchEnabled ? 'Enabled' : 'Off — click to enable'}
+                {localBatchEnabled ? 'Enabled' : 'Off — click to enable'}
               </span>
-              {batchEnabled && selectedBatch.length > 0 && (
+              {localBatchEnabled && selectedBatch.length > 0 && (
                 <span className={styles.toggleBadge}>{selectedBatch.length + ' from history'}</span>
               )}
             </div>
@@ -83,10 +116,10 @@ export function Setting({
               <div className={toggleThumbClass} />
             </div>
           </div>
-          {batchEnabled && (
+          {localBatchEnabled && (
             <div className={styles.settingsRow}>
-              <PickerRow label="🍲 Batch recipes" value={numBatch} setValue={setNumBatch} options={[1,2,3,4]} ac={C.teal} bg={C.tealBg} tc={C.tealText} />
-              <PickerRow label="🥣 Batch servings" value={batchServings} setValue={setBatchServings} options={[8,10,12,15,20]} ac={C.teal} bg={C.tealBg} tc={C.tealText} />
+              <PickerRow label="🍲 Batch recipes" value={localNumBatch} setValue={setLocalNumBatch} options={[1,2,3,4]} ac={C.teal} bg={C.tealBg} tc={C.tealText} />
+              <PickerRow label="🥣 Batch servings" value={localBatchServings} setValue={setLocalBatchServings} options={[8,10,12,15,20]} ac={C.teal} bg={C.tealBg} tc={C.tealText} />
             </div>
           )}
         </div>

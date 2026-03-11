@@ -1,19 +1,16 @@
 .recreatePanel {
   background: #1e293b;
-  border-radius: 14px;
+  border-radius: 16px;
   border: 1px solid #334155;
-  padding: 20px;
-  margin-bottom: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid #334155;
 }
 
-.infoSection {
-  margin-bottom: 16px;
-}
-
-.infoText {
+.instructionLabel {
+  display: block;
   color: var(--muted-color, #94a3b8);
-  font-size: 14px;
-  line-height: 1.5;
-  margin: 0;
-  text-align: center;
+  font-size: 15px;
+  margin-bottom: 8px;
+  font-weight: 500;
 }

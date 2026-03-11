@@ -129,8 +129,6 @@ function MealPlanner() {
     setLoading(false); setStage('');
   }
 
-  const btnLabel = loading?'✨ Generating...':'✨ Generate This Week\'s Meals'+(batchEnabled?' + Batch':'');
-
   const handleViewHistoryMeal = useCallback((mealPlan) => {
     setMealData(mealPlan);
     setCurrentPage('thisweek'); // Switch to This Week tab when viewing a meal plan
@@ -150,69 +148,96 @@ function MealPlanner() {
   return (
     <div style={S.wrap}>
       <div style={S.inner}>
-        <HeaderView
-          numDinners={numDinners}
-          setNumDinners={setNumDinners}
-          numPeople={numPeople}
-          setNumPeople={setNumPeople}
-          calories={calories}
-          setCalories={setCalories}
-          batchEnabled={batchEnabled}
-          setBatchEnabled={setBatchEnabled}
-          numBatch={numBatch}
-          setNumBatch={setNumBatch}
-          batchServings={batchServings}
-          setBatchServings={setBatchServings}
-          selectedBatch={selectedBatch}
-          apiKey={apiKey}
-          setApiKey={setApiKey}
-        />
-
-        {/* Show APIMissingView if no API key, otherwise show PromptView or RecreateRecipesView */}
         {!apiKey ? (
-          <APIMissingView />
-        ) : currentPage === 'thisweek' ? (
-          <PromptView
-            onGenerate={generate}
-            buttonLabel={btnLabel}
-            loading={loading}
-            stage={stage}
-            elapsed={elapsed}
-            progress={progress}
-            numDinners={numDinners}
-            error={error}
-            customRules={customRules}
-            setCustomRules={setCustomRules}
-            numPeople={numPeople}
-            calories={calories}
-            rulesLoaded={rulesLoaded}
-          />
+          <>
+            <HeaderView
+              numDinners={numDinners}
+              setNumDinners={setNumDinners}
+              numPeople={numPeople}
+              setNumPeople={setNumPeople}
+              calories={calories}
+              setCalories={setCalories}
+              batchEnabled={batchEnabled}
+              setBatchEnabled={setBatchEnabled}
+              numBatch={numBatch}
+              setNumBatch={setNumBatch}
+              batchServings={batchServings}
+              setBatchServings={setBatchServings}
+              selectedBatch={selectedBatch}
+              apiKey={apiKey}
+              setApiKey={setApiKey}
+            />
+            <APIMissingView />
+          </>
         ) : (
-          <RecreateRecipesView
-            selectedCount={selectedWeekly.length}
-            numDinners={numDinners}
-            onRecreate={handleRecreate}
-            disabled={loading}
-          />
-        )}
+          <>
+            <HeaderView
+              numDinners={numDinners}
+              setNumDinners={setNumDinners}
+              numPeople={numPeople}
+              setNumPeople={setNumPeople}
+              calories={calories}
+              setCalories={setCalories}
+              batchEnabled={batchEnabled}
+              setBatchEnabled={setBatchEnabled}
+              numBatch={numBatch}
+              setNumBatch={setNumBatch}
+              batchServings={batchServings}
+              setBatchServings={setBatchServings}
+              selectedBatch={selectedBatch}
+              apiKey={apiKey}
+              setApiKey={setApiKey}
+            />
 
-        {/* Tab View */}
-        <TabView
-          mealData={mealData}
-          numDinners={numDinners}
-          numPeople={numPeople}
-          calories={calories}
-          customRules={customRules}
-          batchCookEnabled={batchEnabled}
-          numBatchCook={numBatch}
-          selectedBatch={selectedBatch}
-          setSelectedBatch={setSelectedBatch}
-          onViewMealPlan={handleViewHistoryMeal}
-          onPageChange={setCurrentPage}
-          selectedWeekly={selectedWeekly}
-          setSelectedWeekly={setSelectedWeekly}
-          apiKey={apiKey}
-        />
+            {currentPage === 'thisweek' ? (
+              <PromptView
+                onGenerate={generate}
+                loading={loading}
+                stage={stage}
+                elapsed={elapsed}
+                progress={progress}
+                numDinners={numDinners}
+                error={error}
+                customRules={customRules}
+                setCustomRules={setCustomRules}
+                numPeople={numPeople}
+                calories={calories}
+                rulesLoaded={rulesLoaded}
+                batchEnabled={batchEnabled}
+              />
+            ) : (
+              <RecreateRecipesView
+                selectedCount={selectedWeekly.length}
+                numDinners={numDinners}
+                onRecreate={handleRecreate}
+                disabled={loading}
+                customRules={customRules}
+                setCustomRules={setCustomRules}
+                numPeople={numPeople}
+                calories={calories}
+                rulesLoaded={rulesLoaded}
+              />
+            )}
+
+            {/* Tab View */}
+            <TabView
+              mealData={mealData}
+              numDinners={numDinners}
+              numPeople={numPeople}
+              calories={calories}
+              customRules={customRules}
+              batchCookEnabled={batchEnabled}
+              numBatchCook={numBatch}
+              selectedBatch={selectedBatch}
+              setSelectedBatch={setSelectedBatch}
+              onViewMealPlan={handleViewHistoryMeal}
+              onPageChange={setCurrentPage}
+              selectedWeekly={selectedWeekly}
+              setSelectedWeekly={setSelectedWeekly}
+              apiKey={apiKey}
+            />
+          </>
+        )}
       </div>
 
       {showScrollTop && (

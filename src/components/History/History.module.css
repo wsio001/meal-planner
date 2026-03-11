@@ -73,7 +73,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 5px;
   flex-wrap: wrap;
   gap: 12px;
 }
@@ -183,9 +183,30 @@
 /* Selected Chips */
 .selectedChips {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 14px;
+  flex-wrap: nowrap;
+  gap: 15px;
+  margin-bottom: 5px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  min-height: 38px;
+  scrollbar-width: none;
+}
+
+.selectedChips::-webkit-scrollbar {
+  height: 8px;
+}
+
+.selectedChips::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.selectedChips::-webkit-scrollbar-thumb {
+  background: rgba(51, 65, 85, 0.5);
+  border-radius: 4px;
+}
+
+.selectedChips::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.5);
 }
 
 .chip {
@@ -196,6 +217,8 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .chipNumber {

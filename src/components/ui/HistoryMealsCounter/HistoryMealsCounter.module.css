@@ -1,0 +1,44 @@
+/* HistoryMealsCounter */
+.counterContainer {
+  width: 100%;
+  min-height: 50px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 19px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.counterDisplay {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.counterValue {
+  color: var(--accent-color);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.counterSeparator {
+  color: var(--muted-color);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.counterTotal {
+  color: var(--text-color);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.counterLabel {
+  color: var(--muted-color);
+  font-size: 12px;
+  margin-left: 4px;
+}

@@ -1,10 +1,14 @@
 .missingPanel {
   background: #1e293b;
-  border-radius: 14px;
-  border: 1px solid var(--border-color, #334155);
-  padding: 40px 30px;
-  margin-bottom: 20px;
+  border-radius: 16px;
+  border: 1px solid #334155;
+  padding: 24px;
+  margin-bottom: 24px;
   text-align: center;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .iconContainer {

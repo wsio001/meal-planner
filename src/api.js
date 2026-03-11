@@ -1,8 +1,6 @@
 import { CUISINES, DEFAULT_RULES } from './constants';
 
 // API key is now passed from the user's settings
-// Fallback to environment variable for backward compatibility
-const FALLBACK_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY || '';
 
 export function chunkArr(arr, n) {
   const out = [];
@@ -40,7 +38,7 @@ async function callOnce(sys, usr, parentSignal, apiKey) {
       method: 'POST', signal: ctrl.signal,
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey || FALLBACK_API_KEY,
+        'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true',
       },
