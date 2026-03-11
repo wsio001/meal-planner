@@ -19,8 +19,8 @@ export function RecreateRecipesView({
   const buttonLabel = selectedCount === 0
     ? '✨ Cook Without History'
     : needToFill === 0
-    ? '✨ Recreate Meals'
-    : `✨ Fill ${needToFill} meal${needToFill > 1 ? 's' : ''} with AI`;
+    ? '✨ Reuse Meals'
+    : `✨ Cook ${needToFill} More Meal${needToFill > 1 ? 's' : ''}`;
 
   const cssVars = {
     '--dim-color': C.dim,

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { C } from '../../../constants';
+import { SETTINGS_CONFIG } from '../../../config';
 import styles from './CalorieInput.module.css';
 
 export const CalorieInput = React.memo(function CalorieInput({ calories, setCalories }) {
@@ -8,7 +9,7 @@ export const CalorieInput = React.memo(function CalorieInput({ calories, setCalo
 
   function commit() {
     const v = parseInt(temp);
-    if (!isNaN(v) && v >= 300 && v <= 1500) {
+    if (!isNaN(v) && v >= SETTINGS_CONFIG.CALORIE_MIN && v <= SETTINGS_CONFIG.CALORIE_MAX) {
       setCalories(v);
     } else {
       setTemp(String(calories));
@@ -33,8 +34,8 @@ export const CalorieInput = React.memo(function CalorieInput({ calories, setCalo
             autoFocus
             type="number"
             value={temp}
-            min={300}
-            max={1500}
+            min={SETTINGS_CONFIG.CALORIE_MIN}
+            max={SETTINGS_CONFIG.CALORIE_MAX}
             onChange={e => setTemp(e.target.value)}
             onBlur={commit}
             onKeyDown={e => e.key === 'Enter' && commit()}
@@ -54,7 +55,7 @@ export const CalorieInput = React.memo(function CalorieInput({ calories, setCalo
         <span className={styles.calorieUnit}>kcal</span>
       </div>
       <div className={styles.caloriePresets}>
-        {[400, 500, 600, 700, 750, 800].map(n => {
+        {SETTINGS_CONFIG.CALORIE_PRESETS.map(n => {
           const presetStyle = {
             '--preset-border': calories === n ? C.accent : C.border,
             '--preset-bg': calories === n ? C.accentBg : C.bg,

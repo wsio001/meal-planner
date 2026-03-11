@@ -9,28 +9,34 @@ import { HeaderView } from './components/HeaderView/HeaderView';
 import { PromptView } from './components/PromptView/PromptView';
 import { RecreateRecipesView } from './components/RecreateRecipesView/RecreateRecipesView';
 import { APIMissingView } from './components/APIMissingView/APIMissingView';
+import { DEFAULTS, STORAGE_KEYS, UI_CONFIG, API_CONFIG } from './config';
 
 function MealPlanner() {
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState('');
   const [progress, setProgress] = useState([]);
-  const [mealData, setMealData] = usePersistedState('currentMealPlan', null, 'v1');
+  const [mealData, setMealData] = usePersistedState(STORAGE_KEYS.CURRENT_MEAL_PLAN, null, 'v1');
   const [error, setError] = useState('');
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [currentPage, setCurrentPage] = useState('thisweek');
   const [selectedWeekly, setSelectedWeekly] = useState([]);
 
-  const [apiKey, setApiKey, apiKeyLoaded] = usePersistedState('settings:apiKey', '', 'v1');
+  const [apiKey, setApiKey, apiKeyLoaded] = usePersistedState(STORAGE_KEYS.SETTINGS_API_KEY, '', 'v1');
 
-  const [prefs, setPrefs, prefsLoaded] = usePersistedState('settings:prefs', {
-    numDinners:3, numPeople:2, calories:750, batchEnabled:false, numBatch:2, batchServings:15,
+  const [prefs, setPrefs, prefsLoaded] = usePersistedState(STORAGE_KEYS.SETTINGS_PREFS, {
+    numDinners: DEFAULTS.NUM_DINNERS,
+    numPeople: DEFAULTS.NUM_PEOPLE,
+    calories: DEFAULTS.CALORIES,
+    isBatchEnabled: DEFAULTS.IS_BATCH_ENABLED,
+    numBatch: DEFAULTS.NUM_BATCH,
+    batchServings: DEFAULTS.BATCH_SERVINGS,
   }, 'v1');
-  const { numDinners, numPeople, calories, batchEnabled, numBatch, batchServings } = prefs;
+  const { numDinners, numPeople, calories, isBatchEnabled, numBatch, batchServings } = prefs;
 
   const setNumDinners    = useCallback(v => setPrefs(p=>({...p,numDinners:v})),    [setPrefs]);
   const setNumPeople     = useCallback(v => setPrefs(p=>({...p,numPeople:v})),     [setPrefs]);
   const setCalories      = useCallback(v => setPrefs(p=>({...p,calories:v})),      [setPrefs]);
-  const setBatchEnabled  = useCallback(v => setPrefs(p=>({...p,batchEnabled:typeof v==='function'?v(p.batchEnabled):v})), [setPrefs]);
+  const setIsBatchEnabled  = useCallback(v => setPrefs(p=>({...p,isBatchEnabled:typeof v==='function'?v(p.isBatchEnabled):v})), [setPrefs]);
   const setNumBatch      = useCallback(v => setPrefs(p=>({...p,numBatch:v})),      [setPrefs]);
   const setBatchServings = useCallback(v => setPrefs(p=>({...p,batchServings:v})), [setPrefs]);
 
@@ -44,7 +50,7 @@ function MealPlanner() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
+      setShowScrollTop(window.scrollY > UI_CONFIG.SCROLL_THRESHOLD);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -55,7 +61,7 @@ function MealPlanner() {
     abortRef.current = new AbortController();
     const signal = abortRef.current.signal;
     setLoading(true); setError(''); setMealData(null);
-    const batchNeed = batchEnabled ? Math.max(0, numBatch-selectedBatch.length) : 0;
+    const batchNeed = isBatchEnabled ? Math.max(0, numBatch-selectedBatch.length) : 0;
     const totalSlots = numDinners + batchNeed;
     setProgress(Array(totalSlots).fill(false));
     setStage('Generating recipes...');
@@ -90,7 +96,7 @@ function MealPlanner() {
             })
         : () => Promise.resolve({recipes:[],grocery:[],iphoneNotes:{}});
 
-      const [bParsed,...weeklyResults] = await pLimit([batchFn,...weeklyFns], 3);
+      const [bParsed,...weeklyResults] = await pLimit([batchFn,...weeklyFns], API_CONFIG.MAX_CONCURRENT_REQUESTS);
 
       // Shortfall fallback — retry any cuisine the model missed
       const shortfallFns = [];
@@ -112,14 +118,14 @@ function MealPlanner() {
       });
       if (shortfallFns.length>0) {
         setStage('Filling '+shortfallFns.length+' missing recipe(s)...');
-        const extras = await pLimit(shortfallFns, 3);
+        const extras = await pLimit(shortfallFns, API_CONFIG.MAX_CONCURRENT_REQUESTS);
         weeklyResults.push(...extras);
       }
 
       const wParsed = mergeParsedArray(weeklyResults);
       setStage('Organizing...');
       setProgress(Array(totalSlots).fill(true));
-      const combined = combineParsed(wParsed, bParsed, batchEnabled?selectedBatch:[]);
+      const combined = combineParsed(wParsed, bParsed, isBatchEnabled?selectedBatch:[]);
       setMealData(combined);
       await saveRecipesBatched(
         combined.recipes.filter(r=>!r.isBatchCook),
@@ -157,8 +163,8 @@ function MealPlanner() {
               setNumPeople={setNumPeople}
               calories={calories}
               setCalories={setCalories}
-              batchEnabled={batchEnabled}
-              setBatchEnabled={setBatchEnabled}
+              isBatchEnabled={isBatchEnabled}
+              setIsBatchEnabled={setIsBatchEnabled}
               numBatch={numBatch}
               setNumBatch={setNumBatch}
               batchServings={batchServings}
@@ -178,8 +184,8 @@ function MealPlanner() {
               setNumPeople={setNumPeople}
               calories={calories}
               setCalories={setCalories}
-              batchEnabled={batchEnabled}
-              setBatchEnabled={setBatchEnabled}
+              isBatchEnabled={isBatchEnabled}
+              setIsBatchEnabled={setIsBatchEnabled}
               numBatch={numBatch}
               setNumBatch={setNumBatch}
               batchServings={batchServings}
@@ -203,7 +209,7 @@ function MealPlanner() {
                 numPeople={numPeople}
                 calories={calories}
                 rulesLoaded={rulesLoaded}
-                batchEnabled={batchEnabled}
+                isBatchEnabled={isBatchEnabled}
               />
             ) : (
               <RecreateRecipesView
@@ -226,7 +232,7 @@ function MealPlanner() {
               numPeople={numPeople}
               calories={calories}
               customRules={customRules}
-              batchCookEnabled={batchEnabled}
+              batchCookEnabled={isBatchEnabled}
               numBatchCook={numBatch}
               selectedBatch={selectedBatch}
               setSelectedBatch={setSelectedBatch}

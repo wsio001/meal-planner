@@ -10,8 +10,8 @@ export function HeaderView({
   setNumPeople,
   calories,
   setCalories,
-  batchEnabled,
-  setBatchEnabled,
+  isBatchEnabled,
+  setIsBatchEnabled,
   numBatch,
   setNumBatch,
   batchServings,
@@ -36,7 +36,7 @@ export function HeaderView({
           <h1 className={styles.title}>🍽️ Weekly Meal Planner</h1>
           <p className={styles.summary}>
             {numDinners + ' dinner' + (numDinners > 1 ? 's' : '') + ' · ' + numPeople + ' ' + (numPeople > 1 ? 'people' : 'person') + ' · 🔥 ' + calories + ' cal'}
-            {batchEnabled && (
+            {isBatchEnabled && (
               <span className={styles.batchInfo}>
                 {'· 🍲 Batch ×' + numBatch + ' (' + batchServings + ' srv)'}
               </span>
@@ -56,8 +56,8 @@ export function HeaderView({
           setNumPeople={setNumPeople}
           calories={calories}
           setCalories={setCalories}
-          batchEnabled={batchEnabled}
-          setBatchEnabled={setBatchEnabled}
+          isBatchEnabled={isBatchEnabled}
+          setIsBatchEnabled={setIsBatchEnabled}
           numBatch={numBatch}
           setNumBatch={setNumBatch}
           batchServings={batchServings}

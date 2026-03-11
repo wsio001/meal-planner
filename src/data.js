@@ -1,4 +1,5 @@
 import { storage } from './storage';
+import { STORAGE_KEYS } from './config';
 
 export function parseTabFormat(text) {
   const empty = { overview:[], grocery:[], recipes:[], iphoneNotes:{ Produce:[], 'Protein/Meat':[], Grains:[], Dairy:[], 'Pantry/Spices':[] } };
@@ -154,10 +155,10 @@ export async function saveRecipesBatched(weekly, batch) {
       if (news.length) await storage.set(key, JSON.stringify(ex.concat(news)));
     } catch(e) { console.error(e); }
   }
-  await Promise.all([save(weekly,'recipes:all'), save(batch,'recipes:batch')]);
+  await Promise.all([save(weekly, STORAGE_KEYS.RECIPES_ALL), save(batch, STORAGE_KEYS.RECIPES_BATCH)]);
 }
 
 export async function loadRecipes(key) {
-  try { const r = await storage.get(key||'recipes:all'); return r ? JSON.parse(r.value) : []; }
+  try { const r = await storage.get(key || STORAGE_KEYS.RECIPES_ALL); return r ? JSON.parse(r.value) : []; }
   catch(e) { return []; }
 }

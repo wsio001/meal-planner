@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { C } from '../../constants';
 import { GenerateButton } from '../ui';
 import { RulesEditor } from '../RulesEditor/RulesEditor';
+import { UI_CONFIG } from '../../config';
 import styles from './PromptView.module.css';
 
 export function PromptView({
@@ -17,13 +18,13 @@ export function PromptView({
   numPeople,
   calories,
   rulesLoaded,
-  batchEnabled
+  isBatchEnabled
 }) {
   const [specialRequest, setSpecialRequest] = useState('');
 
   const buttonLabel = loading
     ? '✨ Cooking...'
-    : '✨ Hit Me With A Plan ( Meals' + (batchEnabled ? ' + Batch )' : ' Only )');
+    : '✨ Hit Me With A Plan ( Meals' + (isBatchEnabled ? ' + Batch )' : ' Only )');
 
   const cssVars = {
     '--dim-color': C.dim,
@@ -55,7 +56,7 @@ export function PromptView({
             <div className={styles.progressBar}>
               <div
                 className={styles.progressBarFill}
-                style={{ width: Math.min((elapsed / 75) * 100, 95) + '%' }}
+                style={{ width: Math.min((elapsed / UI_CONFIG.PROGRESS_DENOMINATOR) * 100, UI_CONFIG.PROGRESS_MAX_PERCENT) + '%' }}
               />
             </div>
           </div>

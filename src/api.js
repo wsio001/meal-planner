@@ -1,4 +1,5 @@
 import { CUISINES, DEFAULT_RULES } from './constants';
+import { API_CONFIG } from './config';
 
 // API key is now passed from the user's settings
 
@@ -30,7 +31,7 @@ export async function pLimit(fns, limit = 2) {
 
 async function callOnce(sys, usr, parentSignal, apiKey) {
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 90000);
+  const timer = setTimeout(() => ctrl.abort(), API_CONFIG.TIMEOUT_MS);
   const onAbort = () => ctrl.abort();
   if (parentSignal) parentSignal.addEventListener('abort', onAbort);
   try {
@@ -43,8 +44,8 @@ async function callOnce(sys, usr, parentSignal, apiKey) {
         'anthropic-dangerous-direct-browser-access': 'true',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2500,
+        model: API_CONFIG.MODEL,
+        max_tokens: API_CONFIG.MAX_TOKENS,
         system: sys,
         messages: [{ role: 'user', content: usr }],
       }),
@@ -58,14 +59,14 @@ async function callOnce(sys, usr, parentSignal, apiKey) {
   }
 }
 
-export async function callClaude(sys, usr, signal, apiKey, tries = 3) {
+export async function callClaude(sys, usr, signal, apiKey, tries = API_CONFIG.RETRY_ATTEMPTS) {
   let last;
   for (let i = 0; i < tries; i++) {
     try { return await callOnce(sys, usr, signal, apiKey); }
     catch (e) {
       if (e.name === 'AbortError') throw e;
       last = e;
-      if (i < tries - 1) await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+      if (i < tries - 1) await new Promise(r => setTimeout(r, API_CONFIG.RETRY_BACKOFF(i)));
     }
   }
   throw new Error('Failed after ' + tries + ' attempts: ' + last.message);

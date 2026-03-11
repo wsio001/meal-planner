@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { C, S } from '../../constants';
 import { loadRecipes } from '../../data';
 import { storage } from '../../storage';
+import { STORAGE_KEYS } from '../../config';
 import styles from './History.module.css';
 
 // Convert recipe ingredients to grocery format
@@ -135,14 +136,14 @@ function WeeklyHistorySubTab({ numDinners, selectedWeekly, setSelectedWeekly }) 
   const [loading, setLoading] = useState(true);
   const [fillErr, setFillErr] = useState('');
   const [confirmClear, setConfirmClear] = useState(false);
-  useEffect(() => { loadRecipes('recipes:all').then(r=>{ setAll(r); setLoading(false); }); }, []);
+  useEffect(() => { loadRecipes(STORAGE_KEYS.RECIPES_ALL).then(r=>{ setAll(r); setLoading(false); }); }, []);
 
   const toggleSel = useCallback(r => {
     setSelectedWeekly(prev=>prev.some(x=>x.name===r.name)?prev.filter(x=>x.name!==r.name):prev.length<numDinners?[...prev,r]:prev);
   }, [numDinners, setSelectedWeekly]);
 
   const clearAll = useCallback(async () => {
-    try{await storage.delete('recipes:all');}catch(e){}
+    try{await storage.delete(STORAGE_KEYS.RECIPES_ALL);}catch(e){}
     setAll([]);setSelectedWeekly([]);setConfirmClear(false);
   }, [setSelectedWeekly]);
 
@@ -195,7 +196,7 @@ function BatchCookHistorySubTab({ batchCookEnabled, numBatchCook, selectedBatch,
   const [all, setAll] = useState([]);
   const [loading, setLoading] = useState(true);
   const [confirmClear, setConfirmClear] = useState(false);
-  useEffect(() => { loadRecipes('recipes:batch').then(r=>{setAll(r);setLoading(false);}); }, []);
+  useEffect(() => { loadRecipes(STORAGE_KEYS.RECIPES_BATCH).then(r=>{setAll(r);setLoading(false);}); }, []);
 
   const toggleSel = useCallback(recipe => {
     if(!batchCookEnabled) return;
@@ -203,7 +204,7 @@ function BatchCookHistorySubTab({ batchCookEnabled, numBatchCook, selectedBatch,
   }, [batchCookEnabled,numBatchCook,setSelectedBatch]);
 
   const clearAll = useCallback(async () => {
-    try{await storage.delete('recipes:batch');}catch(e){}
+    try{await storage.delete(STORAGE_KEYS.RECIPES_BATCH);}catch(e){}
     setAll([]);setSelectedBatch([]);setConfirmClear(false);
   }, [setSelectedBatch]);
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { C } from '../../constants';
 import { PickerRow, CalorieInput } from '../ui';
+import { SETTINGS_CONFIG } from '../../config';
 import styles from './Setting.module.css';
 
 export function Setting({
@@ -10,8 +11,8 @@ export function Setting({
   setNumPeople,
   calories,
   setCalories,
-  batchEnabled,
-  setBatchEnabled,
+  isBatchEnabled,
+  setIsBatchEnabled,
   numBatch,
   setNumBatch,
   batchServings,
@@ -25,7 +26,7 @@ export function Setting({
   const [localNumDinners, setLocalNumDinners] = useState(numDinners);
   const [localNumPeople, setLocalNumPeople] = useState(numPeople);
   const [localCalories, setLocalCalories] = useState(calories);
-  const [localBatchEnabled, setLocalBatchEnabled] = useState(batchEnabled);
+  const [localIsBatchEnabled, setLocalIsBatchEnabled] = useState(isBatchEnabled);
   const [localNumBatch, setLocalNumBatch] = useState(numBatch);
   const [localBatchServings, setLocalBatchServings] = useState(batchServings);
   const [localApiKey, setLocalApiKey] = useState(apiKey);
@@ -35,17 +36,17 @@ export function Setting({
     setLocalNumDinners(numDinners);
     setLocalNumPeople(numPeople);
     setLocalCalories(calories);
-    setLocalBatchEnabled(batchEnabled);
+    setLocalIsBatchEnabled(isBatchEnabled);
     setLocalNumBatch(numBatch);
     setLocalBatchServings(batchServings);
     setLocalApiKey(apiKey);
-  }, [numDinners, numPeople, calories, batchEnabled, numBatch, batchServings, apiKey]);
+  }, [numDinners, numPeople, calories, isBatchEnabled, numBatch, batchServings, apiKey]);
 
   const handleSave = () => {
     setNumDinners(localNumDinners);
     setNumPeople(localNumPeople);
     setCalories(localCalories);
-    setBatchEnabled(localBatchEnabled);
+    setIsBatchEnabled(localIsBatchEnabled);
     setNumBatch(localNumBatch);
     setBatchServings(localBatchServings);
     setApiKey(localApiKey);
@@ -54,11 +55,11 @@ export function Setting({
     }
   };
 
-  const toggleContainerClass = `${styles.toggleContainer} ${localBatchEnabled ? styles.on : styles.off}`;
-  const toggleLabelClass = `${styles.toggleLabel} ${localBatchEnabled ? styles.on : styles.off}`;
-  const toggleStatusClass = `${styles.toggleStatus} ${localBatchEnabled ? styles.on : styles.off}`;
-  const toggleTrackClass = `${styles.toggleTrack} ${localBatchEnabled ? styles.on : styles.off}`;
-  const toggleThumbClass = `${styles.toggleThumb} ${localBatchEnabled ? styles.on : styles.off}`;
+  const toggleContainerClass = `${styles.toggleContainer} ${localIsBatchEnabled ? styles.on : styles.off}`;
+  const toggleLabelClass = `${styles.toggleLabel} ${localIsBatchEnabled ? styles.on : styles.off}`;
+  const toggleStatusClass = `${styles.toggleStatus} ${localIsBatchEnabled ? styles.on : styles.off}`;
+  const toggleTrackClass = `${styles.toggleTrack} ${localIsBatchEnabled ? styles.on : styles.off}`;
+  const toggleThumbClass = `${styles.toggleThumb} ${localIsBatchEnabled ? styles.on : styles.off}`;
 
   const cssVars = {
     '--teal-color': C.teal,
@@ -96,19 +97,19 @@ export function Setting({
       </div>
 
       <div className={styles.settingsRow}>
-        <PickerRow label="🍽️ Dinners / week" value={localNumDinners} setValue={setLocalNumDinners} options={[2,3,4,5,6,7]} />
-        <PickerRow label="👥 People / dinner" value={localNumPeople} setValue={setLocalNumPeople} options={[1,2,3,4,5,6]} />
+        <PickerRow label="🍽️ Dinners / week" value={localNumDinners} setValue={setLocalNumDinners} options={SETTINGS_CONFIG.DINNERS_OPTIONS} />
+        <PickerRow label="👥 People / dinner" value={localNumPeople} setValue={setLocalNumPeople} options={SETTINGS_CONFIG.PEOPLE_OPTIONS} />
         <CalorieInput calories={localCalories} setCalories={setLocalCalories} />
       </div>
       <div className={styles.settingsDivider}>
         <div className={styles.batchSettings}>
-          <div onClick={() => setLocalBatchEnabled(v => !v)} className={toggleContainerClass} style={cssVars}>
+          <div onClick={() => setLocalIsBatchEnabled(v => !v)} className={toggleContainerClass} style={cssVars}>
             <div>
               <span className={toggleLabelClass}>🍲 Batch Cook</span>
               <span className={toggleStatusClass}>
-                {localBatchEnabled ? 'Enabled' : 'Off — click to enable'}
+                {localIsBatchEnabled ? 'Enabled' : 'Off — click to enable'}
               </span>
-              {localBatchEnabled && selectedBatch.length > 0 && (
+              {localIsBatchEnabled && selectedBatch.length > 0 && (
                 <span className={styles.toggleBadge}>{selectedBatch.length + ' from history'}</span>
               )}
             </div>
@@ -116,10 +117,10 @@ export function Setting({
               <div className={toggleThumbClass} />
             </div>
           </div>
-          {localBatchEnabled && (
+          {localIsBatchEnabled && (
             <div className={styles.settingsRow}>
-              <PickerRow label="🍲 Batch recipes" value={localNumBatch} setValue={setLocalNumBatch} options={[1,2,3,4]} ac={C.teal} bg={C.tealBg} tc={C.tealText} />
-              <PickerRow label="🥣 Batch servings" value={localBatchServings} setValue={setLocalBatchServings} options={[8,10,12,15,20]} ac={C.teal} bg={C.tealBg} tc={C.tealText} />
+              <PickerRow label="🍲 Batch recipes" value={localNumBatch} setValue={setLocalNumBatch} options={SETTINGS_CONFIG.BATCH_RECIPES_OPTIONS} ac={C.teal} bg={C.tealBg} tc={C.tealText} />
+              <PickerRow label="🥣 Batch servings" value={localBatchServings} setValue={setLocalBatchServings} options={SETTINGS_CONFIG.BATCH_SERVINGS_OPTIONS} ac={C.teal} bg={C.tealBg} tc={C.tealText} />
             </div>
           )}
         </div>
