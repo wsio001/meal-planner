@@ -3,20 +3,21 @@ import { C, S, RULES_KEY, RULES_VER, DEFAULT_RULES } from './constants';
 import { callClaude, buildPrompt, pickCuisines, chunkArr, pLimit } from './api';
 import { parseTabFormat, combineParsed, mergeParsedArray, saveRecipesBatched } from './data';
 import { useElapsed, usePersistedState } from './hooks';
-import { ErrorBoundary } from './components/ui/ui';
-import { MealView } from './components/MealView/MealView';
-import { HistoryTab } from './components/History/History';
+import { ErrorBoundary } from './components/ui';
+import { TabView } from './components/TabView/TabView';
 import { HeaderView } from './components/HeaderView/HeaderView';
 import { PromptView } from './components/PromptView/PromptView';
+import { RecreateRecipesView } from './components/RecreateRecipesView/RecreateRecipesView';
 
 function MealPlanner() {
-  const [page, setPage] = useState('thisweek');
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState('');
   const [progress, setProgress] = useState([]);
   const [mealData, setMealData] = usePersistedState('currentMealPlan', null, 'v1');
   const [error, setError] = useState('');
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [currentPage, setCurrentPage] = useState('thisweek');
+  const [selectedWeekly, setSelectedWeekly] = useState([]);
 
   const [prefs, setPrefs, prefsLoaded] = usePersistedState('settings:prefs', {
     numDinners:3, numPeople:2, calories:750, batchEnabled:false, numBatch:2, batchServings:15,
@@ -129,8 +130,15 @@ function MealPlanner() {
 
   const handleViewHistoryMeal = useCallback((mealPlan) => {
     setMealData(mealPlan);
-    setPage('thisweek');
+    setCurrentPage('thisweek'); // Switch to This Week tab when viewing a meal plan
   }, [setMealData]);
+
+  const handleRecreate = useCallback(() => {
+    // This will use the buildPlan logic from WeeklyHistorySubTab
+    // For now, just switch to This Week tab - the actual generation
+    // happens in the HistoryTab component
+    setCurrentPage('thisweek');
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -155,55 +163,48 @@ function MealPlanner() {
           selectedBatch={selectedBatch}
         />
 
-        {/* Generate controls - always visible */}
-        <PromptView
-          onGenerate={generate}
-          buttonLabel={btnLabel}
-          loading={loading}
-          stage={stage}
-          elapsed={elapsed}
-          progress={progress}
-          numDinners={numDinners}
-          error={error}
-          customRules={customRules}
-          setCustomRules={setCustomRules}
-          numPeople={numPeople}
-          calories={calories}
-          rulesLoaded={rulesLoaded}
-        />
-
-        {/* Tab navigation */}
-        <div style={S.navBar}>
-          {[['thisweek','📅 This Week'],['history','🕘 History']].map(([k,l]) => (
-            <button key={k} onClick={()=>setPage(k)} style={{ flex:1, padding:10, border:'none', borderRadius:9, background:page===k?C.accent:'transparent', color:page===k?'#fff':C.dim, fontWeight:page===k?700:400, fontSize:20, cursor:'pointer' }}>{l}</button>
-          ))}
-        </div>
-
-        {page==='thisweek' && (
-          <div>
-            {mealData ? <MealView mealData={mealData} /> : (
-              <div style={{ textAlign:'center', padding:'60px 20px', color:C.dim }}>
-                <p style={{ fontSize:40, margin:0 }}>📭</p>
-                <p style={{ fontSize:16, marginTop:10 }}>No meal plan generated yet.</p>
-                <p style={{ fontSize:13, color:C.dimmer, marginTop:4 }}>Click "Generate This Week's Meals" above to get started!</p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {page==='history' && (
-          <HistoryTab
+        {/* Show PromptView on This Week, RecreateRecipesView on History */}
+        {currentPage === 'thisweek' ? (
+          <PromptView
+            onGenerate={generate}
+            buttonLabel={btnLabel}
+            loading={loading}
+            stage={stage}
+            elapsed={elapsed}
+            progress={progress}
             numDinners={numDinners}
+            error={error}
+            customRules={customRules}
+            setCustomRules={setCustomRules}
             numPeople={numPeople}
             calories={calories}
-            customRules={customRules}
-            batchCookEnabled={batchEnabled}
-            numBatchCook={numBatch}
-            selectedBatch={selectedBatch}
-            setSelectedBatch={setSelectedBatch}
-            onViewMealPlan={handleViewHistoryMeal}
+            rulesLoaded={rulesLoaded}
+          />
+        ) : (
+          <RecreateRecipesView
+            selectedCount={selectedWeekly.length}
+            numDinners={numDinners}
+            onRecreate={handleRecreate}
+            disabled={loading}
           />
         )}
+
+        {/* Tab View */}
+        <TabView
+          mealData={mealData}
+          numDinners={numDinners}
+          numPeople={numPeople}
+          calories={calories}
+          customRules={customRules}
+          batchCookEnabled={batchEnabled}
+          numBatchCook={numBatch}
+          selectedBatch={selectedBatch}
+          setSelectedBatch={setSelectedBatch}
+          onViewMealPlan={handleViewHistoryMeal}
+          onPageChange={setCurrentPage}
+          selectedWeekly={selectedWeekly}
+          setSelectedWeekly={setSelectedWeekly}
+        />
       </div>
 
       {showScrollTop && (

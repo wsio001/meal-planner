@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { C } from '../../constants';
-import { SectionHeader } from '../ui/ui';
+import { SectionHeader } from '../ui';
 import { RecipeCard } from '../RecipeCard/RecipeCard';
 import styles from './MealView.module.css';
 

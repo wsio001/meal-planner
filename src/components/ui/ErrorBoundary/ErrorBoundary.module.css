@@ -1,0 +1,32 @@
+/* ErrorBoundary */
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 40px;
+  text-align: center;
+  color: #ef4444;
+}
+
+.errorIcon {
+  font-size: 48px;
+  margin: 0 0 16px;
+}
+
+.errorButton {
+  margin-top: 20px;
+  padding: 10px 24px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.errorButton:hover {
+  background: #dc2626;
+}

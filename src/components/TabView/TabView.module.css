@@ -1,0 +1,28 @@
+.navBar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.navButton {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--dim-color, #8b92a7);
+  font-weight: 400;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navButton.active {
+  background: var(--accent-color, #8b5cf6);
+  color: var(--text-color, #fff);
+  font-weight: 700;
+}
+
+.navButton:hover:not(.active) {
+  background: rgba(139, 92, 246, 0.1);
+}

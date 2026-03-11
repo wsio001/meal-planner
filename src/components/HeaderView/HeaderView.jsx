@@ -61,6 +61,7 @@ export function HeaderView({
           batchServings={batchServings}
           setBatchServings={setBatchServings}
           selectedBatch={selectedBatch}
+          onClose={() => setShowSettings(false)}
         />
       )}
     </>

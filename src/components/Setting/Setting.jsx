@@ -1,6 +1,6 @@
 import React from 'react';
 import { C } from '../../constants';
-import { PickerRow, CalorieInput } from '../ui/ui';
+import { PickerRow, CalorieInput } from '../ui';
 import styles from './Setting.module.css';
 
 export function Setting({
@@ -16,7 +16,8 @@ export function Setting({
   setNumBatch,
   batchServings,
   setBatchServings,
-  selectedBatch
+  selectedBatch,
+  onClose
 }) {
   const toggleContainerClass = `${styles.toggleContainer} ${batchEnabled ? styles.on : styles.off}`;
   const toggleLabelClass = `${styles.toggleLabel} ${batchEnabled ? styles.on : styles.off}`;
@@ -29,12 +30,20 @@ export function Setting({
     '--teal-text': C.tealText,
     '--teal-dark': C.tealDark,
     '--muted-color': C.muted,
-    '--dimmer-color': C.dimmer
+    '--dimmer-color': C.dimmer,
+    '--accent-color': C.accent
   };
 
   return (
     <div className={styles.settingsPanel}>
-      <p className={styles.settingsTitle}>Settings</p>
+      <div className={styles.settingsHeader}>
+        <p className={styles.settingsTitle}>Settings</p>
+        {onClose && (
+          <button onClick={onClose} className={styles.saveButton} style={cssVars}>
+            ✓ Save
+          </button>
+        )}
+      </div>
       <div className={styles.settingsRow}>
         <PickerRow label="🍽️ Dinners / week" value={numDinners} setValue={setNumDinners} options={[2,3,4,5,6,7]} />
         <PickerRow label="👥 People / dinner" value={numPeople} setValue={setNumPeople} options={[1,2,3,4,5,6]} />

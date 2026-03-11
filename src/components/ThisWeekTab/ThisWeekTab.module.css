@@ -1,0 +1,21 @@
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.emptyIcon {
+  font-size: 40px;
+  margin: 0;
+}
+
+.emptyTitle {
+  font-size: 16px;
+  margin-top: 10px;
+  color: var(--dim-color, #8b92a7);
+}
+
+.emptySubtitle {
+  font-size: 13px;
+  color: var(--dimmer-color, #666c7f);
+  margin-top: 4px;
+}

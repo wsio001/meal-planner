@@ -233,56 +233,64 @@
   color: #d6d3d1;
 }
 
-.batchOnBar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
 .batchLabel {
-  color: var(--teal-text);
+  color: var(--teal-text, #2dd4bf);
   font-size: 13px;
 }
 
 .batchBadge {
-  background: var(--teal-color);
-  color: var(--teal-dark);
+  background: var(--teal-color, #14b8a6);
+  color: var(--teal-dark, #134e4a);
   border-radius: 20px;
   padding: 2px 10px;
   font-size: 12px;
   font-weight: 700;
 }
 
-.clearRowContainer {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 16px;
+/* History Card Container */
+.historyCard {
+  background: #1e293b;
+  border-radius: 16px;
+  border: 1px solid #334155;
+  overflow: hidden;
 }
 
-/* Sub Tab Bar */
-.subTabBar {
+/* Tab Navigation (matching MealView style) */
+.tabBar {
   display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
+  border-bottom: 1px solid #334155;
 }
 
-.subTabButton {
+.tabButton {
   flex: 1;
-  padding: 9px 12px;
+  padding: 14px 8px;
   border: none;
-  border-radius: 7px;
-  font-weight: 400;
-  font-size: 15px;
-  cursor: pointer;
   background: transparent;
-  color: var(--dim-color);
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 400;
+  color: var(--tab-color);
+  border-bottom: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
-.subTabButton.active {
+.tabButton.active {
+  color: var(--purple-color);
   font-weight: 700;
-  color: #fff;
-  background: var(--tab-bg);
+  border-bottom: 2px solid var(--purple-color);
+}
+
+.tabButton.activeBatch {
+  color: var(--teal-color);
+  font-weight: 700;
+  border-bottom: 2px solid var(--teal-color);
+}
+
+.tabContent {
+  padding: 24px;
 }
 
 .tabBadge {

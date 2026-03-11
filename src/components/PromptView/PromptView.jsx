@@ -1,6 +1,6 @@
 import React from 'react';
 import { C } from '../../constants';
-import { SpecialRequestInput } from '../ui/ui';
+import { SpecialRequestInput } from '../ui';
 import { RulesEditor } from '../RulesEditor/RulesEditor';
 import styles from './PromptView.module.css';
 

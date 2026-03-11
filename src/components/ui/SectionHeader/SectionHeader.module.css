@@ -1,0 +1,14 @@
+/* SectionHeader */
+.sectionHeader {
+  border-bottom: 2px solid var(--section-border);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.sectionHeaderLabel {
+  color: var(--section-color);
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

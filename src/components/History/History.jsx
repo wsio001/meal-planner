@@ -131,26 +131,25 @@ const HistoryTable = React.memo(function HistoryTable({ rows, selected, onToggle
   );
 });
 
-function WeeklyHistorySubTab({ numDinners, numPeople, calories, customRules, onViewMealPlan }) {
+function WeeklyHistorySubTab({ numDinners, numPeople, calories, customRules, onViewMealPlan, selectedWeekly, setSelectedWeekly }) {
   const [all, setAll] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState([]);
   const [filling, setFilling] = useState(false);
   const [fillErr, setFillErr] = useState('');
   const [confirmClear, setConfirmClear] = useState(false);
   useEffect(() => { loadRecipes('recipes:all').then(r=>{ setAll(r); setLoading(false); }); }, []);
 
   const toggleSel = useCallback(r => {
-    setSelected(prev=>prev.some(x=>x.name===r.name)?prev.filter(x=>x.name!==r.name):prev.length<numDinners?[...prev,r]:prev);
-  }, [numDinners]);
+    setSelectedWeekly(prev=>prev.some(x=>x.name===r.name)?prev.filter(x=>x.name!==r.name):prev.length<numDinners?[...prev,r]:prev);
+  }, [numDinners, setSelectedWeekly]);
 
   const buildPlan = useCallback(async () => {
-    const need=numDinners-selected.length;
+    const need=numDinners-selectedWeekly.length;
     if(need===0){
       // Generate grocery list from selected recipes
-      const { grocery: selectedGrocery, iphoneNotes: selectedNotes } = recipesToGrocery(selected);
+      const { grocery: selectedGrocery, iphoneNotes: selectedNotes } = recipesToGrocery(selectedWeekly);
       const mealPlan = combineParsed(
-        {recipes:selected.map(r=>({...r,isBatchCook:false})),grocery:selectedGrocery,iphoneNotes:selectedNotes},
+        {recipes:selectedWeekly.map(r=>({...r,isBatchCook:false})),grocery:selectedGrocery,iphoneNotes:selectedNotes},
         {recipes:[],grocery:[],iphoneNotes:{}},
         []
       );
@@ -159,29 +158,29 @@ function WeeklyHistorySubTab({ numDinners, numPeople, calories, customRules, onV
     }
     setFilling(true);setFillErr('');
     try {
-      const sp=selected.length?'Already have: '+selected.map(r=>r.name).join(', ')+'. Pick '+need+' complementary recipe(s).':'';
+      const sp=selectedWeekly.length?'Already have: '+selectedWeekly.map(r=>r.name).join(', ')+'. Pick '+need+' complementary recipe(s).':'';
       const p=buildPrompt(need,numPeople,calories,sp,customRules,false);
       const parsed=parseTabFormat(await callClaude(p.system,p.user,null));
       const newR=(parsed.recipes||[]).map(r=>({...r,isBatchCook:false}));
-      await saveRecipesBatched(newR.filter(r=>!selected.some(s=>s.name===r.name)),[]);
+      await saveRecipesBatched(newR.filter(r=>!selectedWeekly.some(s=>s.name===r.name)),[]);
       setAll(prev=>{const names=new Set(prev.map(r=>r.name.toLowerCase()));return [...prev,...newR.filter(r=>!names.has(r.name.toLowerCase()))];});
 
       // Generate grocery list from selected recipes and merge with new recipes' grocery
-      const { grocery: selectedGrocery, iphoneNotes: selectedNotes } = recipesToGrocery(selected);
+      const { grocery: selectedGrocery, iphoneNotes: selectedNotes } = recipesToGrocery(selectedWeekly);
       const mealPlan = combineParsed(
-        {recipes:[...selected.map(r=>({...r,isBatchCook:false})),...newR],grocery:[...selectedGrocery,...(parsed.grocery||[])],iphoneNotes:selectedNotes},
+        {recipes:[...selectedWeekly.map(r=>({...r,isBatchCook:false})),...newR],grocery:[...selectedGrocery,...(parsed.grocery||[])],iphoneNotes:selectedNotes},
         {recipes:[],grocery:[],iphoneNotes:parsed.iphoneNotes||{}},
         []
       );
       onViewMealPlan(mealPlan);
     } catch(e){setFillErr('Failed: '+e.message);}
     setFilling(false);
-  }, [numDinners,numPeople,calories,customRules,selected,onViewMealPlan]);
+  }, [numDinners,numPeople,calories,customRules,selectedWeekly,onViewMealPlan]);
 
   const clearAll = useCallback(async () => {
     try{await storage.delete('recipes:all');}catch(e){}
-    setAll([]);setSelected([]);setConfirmClear(false);
-  }, []);
+    setAll([]);setSelectedWeekly([]);setConfirmClear(false);
+  }, [setSelectedWeekly]);
 
   if(loading) return <p className={styles.loading}>Loading...</p>;
   if(!all.length) return <div style={S.emptyState}><p style={{fontSize:40}}>📭</p><p>No past weekly recipes yet.</p></div>;
@@ -201,20 +200,20 @@ function WeeklyHistorySubTab({ numDinners, numPeople, calories, customRules, onV
       <div className={styles.historyBar} style={barStyle}>
         <div className={styles.historyBarInfo}>
           <span className={styles.historyBarLabel}>{'Select up to '+numDinners+' recipes'}</span>
-          <span className={styles.historyBarBadge}>{selected.length+' / '+numDinners}</span>
+          <span className={styles.historyBarBadge}>{selectedWeekly.length+' / '+numDinners}</span>
         </div>
         <div className={styles.historyBarButtons}>
-          {selected.length>0&&<button onClick={()=>setSelected([])} className={styles.clearButton}>Clear</button>}
-          {selected.length>0&&<button onClick={buildPlan} disabled={filling} className={styles.primaryButton}>{filling?'⏳ Generating...':selected.length===numDinners?'✨ View Meal Plan':'✨ Fill '+(numDinners-selected.length)+' with AI'}</button>}
+          {selectedWeekly.length>0&&<button onClick={()=>setSelectedWeekly([])} className={styles.clearButton}>Clear</button>}
+          {selectedWeekly.length>0&&<button onClick={buildPlan} disabled={filling} className={styles.primaryButton}>{filling?'⏳ Generating...':selectedWeekly.length===numDinners?'✨ View Meal Plan':'✨ Fill '+(numDinners-selectedWeekly.length)+' with AI'}</button>}
           {confirmClear
             ?<div className={styles.confirmRow}><span className={styles.confirmText}>Sure?</span><button onClick={clearAll} className={styles.confirmYesButton}>Yes</button><button onClick={()=>setConfirmClear(false)} className={styles.confirmCancelButton}>Cancel</button></div>
             :<button onClick={()=>setConfirmClear(true)} className={styles.deleteButton}>🗑 Clear All</button>}
         </div>
       </div>
       {fillErr&&<p className={styles.errorMessage}>{fillErr}</p>}
-      {selected.length>0&&(
+      {selectedWeekly.length>0&&(
         <div className={styles.selectedChips} style={{'--chip-bg': C.accentBg, '--chip-accent': C.accent}}>
-          {selected.map((r,i)=>(
+          {selectedWeekly.map((r,i)=>(
             <div key={r.id||r.name+'_'+i} className={styles.chip}>
               <span className={styles.chipNumber}>{'#'+(i+1)}</span>{' '+r.name}
               <span onClick={()=>toggleSel(r)} className={styles.chipClose}>×</span>
@@ -222,7 +221,7 @@ function WeeklyHistorySubTab({ numDinners, numPeople, calories, customRules, onV
           ))}
         </div>
       )}
-      <HistoryTable rows={all} selected={selected} onToggle={toggleSel} maxSelect={numDinners} acColor={C.accent} acBg={C.accentBg} acText={C.accentText} checkDark={false} disabled={false} />
+      <HistoryTable rows={all} selected={selectedWeekly} onToggle={toggleSel} maxSelect={numDinners} acColor={C.accent} acBg={C.accentBg} acText={C.accentText} checkDark={false} disabled={false} />
     </div>
   );
 }
@@ -246,7 +245,7 @@ function BatchCookHistorySubTab({ batchCookEnabled, numBatchCook, selectedBatch,
   if(loading) return <p className={styles.loading}>Loading...</p>;
   if(!all.length) return (
     <div style={S.emptyState}><p style={{fontSize:40}}>🍲</p><p>No batch cook recipes saved yet.</p>
-      <p style={{fontSize:12}}>Enable Batch Cook on the Generate tab to create your first batch recipes.</p>
+      <p style={{fontSize:12}}>Enable Batch Cook in Setting to create your first batch recipes.</p>
     </div>
   );
 
@@ -266,12 +265,22 @@ function BatchCookHistorySubTab({ batchCookEnabled, numBatchCook, selectedBatch,
 
   return (
     <div style={batchStyle}>
-      {!batchCookEnabled
-        ?<div className={styles.batchOffBar}>🔒 Enable <strong>Batch Cook</strong> on the Generate tab to select recipes.</div>
-        :<div className={styles.batchOnBar}>
-          <span className={styles.batchLabel}>{'Select up to '+numBatchCook+' batch recipe'+(numBatchCook>1?'s':'')}</span>
-          <span className={styles.batchBadge}>{selectedBatch.length+' / '+numBatchCook}</span>
-        </div>}
+      {!batchCookEnabled ? (
+        <div className={styles.batchOffBar}>🔒 Enable <strong>Batch Cook</strong> in Setting to select recipes.</div>
+      ) : (
+        <div className={styles.historyBar}>
+          <div className={styles.historyBarInfo}>
+            <span className={styles.batchLabel}>{'Select up to '+numBatchCook+' batch recipe'+(numBatchCook>1?'s':'')}</span>
+            <span className={styles.batchBadge}>{selectedBatch.length+' / '+numBatchCook}</span>
+          </div>
+          <div className={styles.historyBarButtons}>
+            {selectedBatch.length>0&&<button onClick={()=>setSelectedBatch([])} className={styles.clearButton}>Clear</button>}
+            {confirmClear
+              ?<div className={styles.confirmRow}><span className={styles.confirmText}>Sure?</span><button onClick={clearAll} className={styles.confirmYesButton}>Yes</button><button onClick={()=>setConfirmClear(false)} className={styles.confirmCancelButton}>Cancel</button></div>
+              :<button onClick={()=>setConfirmClear(true)} className={styles.deleteButton}>🗑 Clear All</button>}
+          </div>
+        </div>
+      )}
       {batchCookEnabled&&selectedBatch.length>0&&(
         <div className={styles.selectedChips}>
           {selectedBatch.map((r,i)=>(
@@ -282,51 +291,44 @@ function BatchCookHistorySubTab({ batchCookEnabled, numBatchCook, selectedBatch,
           ))}
         </div>
       )}
-      <div className={styles.clearRowContainer}>
-        {confirmClear
-          ?<div className={styles.confirmRow}><span className={styles.confirmText}>Clear all?</span><button onClick={clearAll} className={styles.confirmYesButton}>Yes</button><button onClick={()=>setConfirmClear(false)} className={styles.confirmCancelButton}>Cancel</button></div>
-          :<button onClick={()=>setConfirmClear(true)} className={styles.deleteButton}>🗑 Clear All</button>}
-      </div>
       <HistoryTable rows={all} selected={selectedBatch} onToggle={toggleSel} maxSelect={numBatchCook} acColor={C.teal} acBg={C.tealBg} acText={C.tealText} checkDark={true} disabled={!batchCookEnabled} />
     </div>
   );
 }
 
-export function HistoryTab({ numDinners, numPeople, calories, customRules, batchCookEnabled, numBatchCook, selectedBatch, setSelectedBatch, onViewMealPlan }) {
+export function HistoryTab({ numDinners, numPeople, calories, customRules, batchCookEnabled, numBatchCook, selectedBatch, setSelectedBatch, onViewMealPlan, selectedWeekly, setSelectedWeekly }) {
   const [sub, setSub] = useState('weekly');
 
-  const tabStyle = {
-    '--dim-color': C.dim,
-    '--tab-bg': sub === 'weekly' ? C.accent : C.teal
-  };
-
-  const weeklyBtnStyle = sub === 'weekly' ? { '--tab-bg': C.accent } : {};
-  const batchBtnStyle = sub === 'batch' ? { '--tab-bg': C.teal, color: C.tealDark } : {};
-
-  const badgeStyle = {
-    '--badge-bg': sub === 'batch' ? C.tealDark : C.teal,
-    '--badge-text': sub === 'batch' ? C.teal : C.tealDark
+  const cssVars = {
+    '--tab-color': C.dim,
+    '--purple-color': C.purple,
+    '--teal-color': C.teal,
+    '--teal-text': C.tealText,
+    '--badge-bg': C.tealDark,
+    '--badge-text': C.teal
   };
 
   return (
-    <div>
-      <div className={styles.subTabBar} style={tabStyle}>
+    <div className={styles.historyCard}>
+      <div className={styles.tabBar}>
         <button
           onClick={()=>setSub('weekly')}
-          className={`${styles.subTabButton} ${sub==='weekly'?styles.active:''}`}
-          style={weeklyBtnStyle}>
+          className={`${styles.tabButton} ${sub==='weekly'?styles.active:''}`}
+          style={cssVars}>
           📅 Weekly
         </button>
         <button
           onClick={()=>setSub('batch')}
-          className={`${styles.subTabButton} ${sub==='batch'?styles.active:''}`}
-          style={batchBtnStyle}>
+          className={`${styles.tabButton} ${sub==='batch'?styles.activeBatch:''}`}
+          style={cssVars}>
           {'🍲 Batch Cook'}
-          {batchCookEnabled&&selectedBatch.length>0&&<span className={styles.tabBadge} style={badgeStyle}>{selectedBatch.length}</span>}
+          {batchCookEnabled&&selectedBatch.length>0&&<span className={styles.tabBadge}>{selectedBatch.length}</span>}
         </button>
       </div>
-      {sub==='weekly'&&<WeeklyHistorySubTab numDinners={numDinners} numPeople={numPeople} calories={calories} customRules={customRules} onViewMealPlan={onViewMealPlan} />}
-      {sub==='batch' &&<BatchCookHistorySubTab batchCookEnabled={batchCookEnabled} numBatchCook={numBatchCook} selectedBatch={selectedBatch} setSelectedBatch={setSelectedBatch} />}
+      <div className={styles.tabContent}>
+        {sub==='weekly'&&<WeeklyHistorySubTab numDinners={numDinners} numPeople={numPeople} calories={calories} customRules={customRules} onViewMealPlan={onViewMealPlan} selectedWeekly={selectedWeekly} setSelectedWeekly={setSelectedWeekly} />}
+        {sub==='batch' &&<BatchCookHistorySubTab batchCookEnabled={batchCookEnabled} numBatchCook={numBatchCook} selectedBatch={selectedBatch} setSelectedBatch={setSelectedBatch} />}
+      </div>
     </div>
   );
 }
