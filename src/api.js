@@ -1,6 +1,8 @@
 import { CUISINES, DEFAULT_RULES } from './constants';
 
-const API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY || '';
+// API key is now passed from the user's settings
+// Fallback to environment variable for backward compatibility
+const FALLBACK_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY || '';
 
 export function chunkArr(arr, n) {
   const out = [];
@@ -28,7 +30,7 @@ export async function pLimit(fns, limit = 2) {
   return results;
 }
 
-async function callOnce(sys, usr, parentSignal) {
+async function callOnce(sys, usr, parentSignal, apiKey) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 90000);
   const onAbort = () => ctrl.abort();
@@ -38,7 +40,7 @@ async function callOnce(sys, usr, parentSignal) {
       method: 'POST', signal: ctrl.signal,
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': API_KEY,
+        'x-api-key': apiKey || FALLBACK_API_KEY,
         'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true',
       },
@@ -58,10 +60,10 @@ async function callOnce(sys, usr, parentSignal) {
   }
 }
 
-export async function callClaude(sys, usr, signal, tries = 3) {
+export async function callClaude(sys, usr, signal, apiKey, tries = 3) {
   let last;
   for (let i = 0; i < tries; i++) {
-    try { return await callOnce(sys, usr, signal); }
+    try { return await callOnce(sys, usr, signal, apiKey); }
     catch (e) {
       if (e.name === 'AbortError') throw e;
       last = e;

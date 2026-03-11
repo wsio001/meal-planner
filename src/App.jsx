@@ -8,6 +8,7 @@ import { TabView } from './components/TabView/TabView';
 import { HeaderView } from './components/HeaderView/HeaderView';
 import { PromptView } from './components/PromptView/PromptView';
 import { RecreateRecipesView } from './components/RecreateRecipesView/RecreateRecipesView';
+import { APIMissingView } from './components/APIMissingView/APIMissingView';
 
 function MealPlanner() {
   const [loading, setLoading] = useState(false);
@@ -18,6 +19,8 @@ function MealPlanner() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [currentPage, setCurrentPage] = useState('thisweek');
   const [selectedWeekly, setSelectedWeekly] = useState([]);
+
+  const [apiKey, setApiKey, apiKeyLoaded] = usePersistedState('settings:apiKey', '', 'v1');
 
   const [prefs, setPrefs, prefsLoaded] = usePersistedState('settings:prefs', {
     numDinners:3, numPeople:2, calories:750, batchEnabled:false, numBatch:2, batchServings:15,
@@ -69,7 +72,7 @@ function MealPlanner() {
             ? 'This recipe MUST be '+chunk[0]+' cuisine.'
             : 'Generate exactly 2 recipes. Recipe 1 MUST be '+chunk[0]+' cuisine. Recipe 2 MUST be '+chunk[1]+' cuisine.';
           const p = buildPrompt(chunk.length, numPeople, calories, (cuisineHint+(userSpecial?' '+userSpecial:'')).trim(), customRules, false);
-          return callClaude(p.system, p.user, signal).then(parseTabFormat).then(parsed => {
+          return callClaude(p.system, p.user, signal, apiKey).then(parseTabFormat).then(parsed => {
             chunk.forEach((_,j) => {
               const idx=baseIdx+j;
               setProgress(prev=>{ const n=[...prev]; if(idx<n.length) n[idx]=true; return n; });
@@ -80,7 +83,7 @@ function MealPlanner() {
       });
 
       const batchFn = batchNeed>0
-        ? () => callClaude(...Object.values(buildPrompt(batchNeed,batchServings,calories,userSpecial,customRules,true)),signal)
+        ? () => callClaude(...Object.values(buildPrompt(batchNeed,batchServings,calories,userSpecial,customRules,true)),signal,apiKey)
             .then(parseTabFormat).then(parsed => {
               (parsed.recipes||[]).forEach((_,i)=>setProgress(prev=>{ const n=[...prev]; n[numDinners+i]=true; return n; }));
               return parsed;
@@ -100,7 +103,7 @@ function MealPlanner() {
           const slotIdx = chunkBase+got+j;
           shortfallFns.push(() => {
             const p = buildPrompt(1, numPeople, calories, ('This recipe MUST be '+cuisine+' cuisine.'+(userSpecial?' '+userSpecial:'')).trim(), customRules, false);
-            return callClaude(p.system, p.user, signal).then(parseTabFormat).then(r => {
+            return callClaude(p.system, p.user, signal, apiKey).then(parseTabFormat).then(r => {
               setProgress(prev=>{ const n=[...prev]; if(slotIdx<n.length) n[slotIdx]=true; return n; });
               return r;
             });
@@ -161,10 +164,14 @@ function MealPlanner() {
           batchServings={batchServings}
           setBatchServings={setBatchServings}
           selectedBatch={selectedBatch}
+          apiKey={apiKey}
+          setApiKey={setApiKey}
         />
 
-        {/* Show PromptView on This Week, RecreateRecipesView on History */}
-        {currentPage === 'thisweek' ? (
+        {/* Show APIMissingView if no API key, otherwise show PromptView or RecreateRecipesView */}
+        {!apiKey ? (
+          <APIMissingView />
+        ) : currentPage === 'thisweek' ? (
           <PromptView
             onGenerate={generate}
             buttonLabel={btnLabel}
@@ -204,6 +211,7 @@ function MealPlanner() {
           onPageChange={setCurrentPage}
           selectedWeekly={selectedWeekly}
           setSelectedWeekly={setSelectedWeekly}
+          apiKey={apiKey}
         />
       </div>
 

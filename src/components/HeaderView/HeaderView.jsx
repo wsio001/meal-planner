@@ -16,7 +16,9 @@ export function HeaderView({
   setNumBatch,
   batchServings,
   setBatchServings,
-  selectedBatch
+  selectedBatch,
+  apiKey,
+  setApiKey
 }) {
   const [showSettings, setShowSettings] = useState(false);
 
@@ -61,6 +63,8 @@ export function HeaderView({
           batchServings={batchServings}
           setBatchServings={setBatchServings}
           selectedBatch={selectedBatch}
+          apiKey={apiKey}
+          setApiKey={setApiKey}
           onClose={() => setShowSettings(false)}
         />
       )}

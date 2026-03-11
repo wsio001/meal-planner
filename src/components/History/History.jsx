@@ -131,7 +131,7 @@ const HistoryTable = React.memo(function HistoryTable({ rows, selected, onToggle
   );
 });
 
-function WeeklyHistorySubTab({ numDinners, numPeople, calories, customRules, onViewMealPlan, selectedWeekly, setSelectedWeekly }) {
+function WeeklyHistorySubTab({ numDinners, numPeople, calories, customRules, onViewMealPlan, selectedWeekly, setSelectedWeekly, apiKey }) {
   const [all, setAll] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filling, setFilling] = useState(false);
@@ -160,7 +160,7 @@ function WeeklyHistorySubTab({ numDinners, numPeople, calories, customRules, onV
     try {
       const sp=selectedWeekly.length?'Already have: '+selectedWeekly.map(r=>r.name).join(', ')+'. Pick '+need+' complementary recipe(s).':'';
       const p=buildPrompt(need,numPeople,calories,sp,customRules,false);
-      const parsed=parseTabFormat(await callClaude(p.system,p.user,null));
+      const parsed=parseTabFormat(await callClaude(p.system,p.user,null,apiKey));
       const newR=(parsed.recipes||[]).map(r=>({...r,isBatchCook:false}));
       await saveRecipesBatched(newR.filter(r=>!selectedWeekly.some(s=>s.name===r.name)),[]);
       setAll(prev=>{const names=new Set(prev.map(r=>r.name.toLowerCase()));return [...prev,...newR.filter(r=>!names.has(r.name.toLowerCase()))];});
@@ -175,7 +175,7 @@ function WeeklyHistorySubTab({ numDinners, numPeople, calories, customRules, onV
       onViewMealPlan(mealPlan);
     } catch(e){setFillErr('Failed: '+e.message);}
     setFilling(false);
-  }, [numDinners,numPeople,calories,customRules,selectedWeekly,onViewMealPlan]);
+  }, [numDinners,numPeople,calories,customRules,selectedWeekly,onViewMealPlan,apiKey]);
 
   const clearAll = useCallback(async () => {
     try{await storage.delete('recipes:all');}catch(e){}
@@ -296,7 +296,7 @@ function BatchCookHistorySubTab({ batchCookEnabled, numBatchCook, selectedBatch,
   );
 }
 
-export function HistoryTab({ numDinners, numPeople, calories, customRules, batchCookEnabled, numBatchCook, selectedBatch, setSelectedBatch, onViewMealPlan, selectedWeekly, setSelectedWeekly }) {
+export function HistoryTab({ numDinners, numPeople, calories, customRules, batchCookEnabled, numBatchCook, selectedBatch, setSelectedBatch, onViewMealPlan, selectedWeekly, setSelectedWeekly, apiKey }) {
   const [sub, setSub] = useState('weekly');
 
   const cssVars = {
@@ -326,7 +326,7 @@ export function HistoryTab({ numDinners, numPeople, calories, customRules, batch
         </button>
       </div>
       <div className={styles.tabContent}>
-        {sub==='weekly'&&<WeeklyHistorySubTab numDinners={numDinners} numPeople={numPeople} calories={calories} customRules={customRules} onViewMealPlan={onViewMealPlan} selectedWeekly={selectedWeekly} setSelectedWeekly={setSelectedWeekly} />}
+        {sub==='weekly'&&<WeeklyHistorySubTab numDinners={numDinners} numPeople={numPeople} calories={calories} customRules={customRules} onViewMealPlan={onViewMealPlan} selectedWeekly={selectedWeekly} setSelectedWeekly={setSelectedWeekly} apiKey={apiKey} />}
         {sub==='batch' &&<BatchCookHistorySubTab batchCookEnabled={batchCookEnabled} numBatchCook={numBatchCook} selectedBatch={selectedBatch} setSelectedBatch={setSelectedBatch} />}
       </div>
     </div>

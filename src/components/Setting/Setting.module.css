@@ -40,6 +40,49 @@
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
+/* API Key Section */
+.apiKeySection {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #334155;
+}
+
+.apiKeyLabel {
+  display: block;
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.apiKeyInput {
+  width: 100%;
+  padding: 10px 14px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.apiKeyInput:focus {
+  border-color: #8b5cf6;
+}
+
+.apiKeyInput::placeholder {
+  color: #475569;
+}
+
+.apiKeyHint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
 .settingsRow {
   display: flex;
   gap: 20px;

@@ -17,6 +17,8 @@ export function Setting({
   batchServings,
   setBatchServings,
   selectedBatch,
+  apiKey,
+  setApiKey,
   onClose
 }) {
   const toggleContainerClass = `${styles.toggleContainer} ${batchEnabled ? styles.on : styles.off}`;
@@ -44,6 +46,22 @@ export function Setting({
           </button>
         )}
       </div>
+
+      {/* API Key Section */}
+      <div className={styles.apiKeySection}>
+        <label className={styles.apiKeyLabel}>🔑 Anthropic API Key</label>
+        <input
+          type="password"
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+          placeholder="sk-ant-..."
+          className={styles.apiKeyInput}
+        />
+        <p className={styles.apiKeyHint}>
+          Your API key is stored locally and never sent to any server except Anthropic's API.
+        </p>
+      </div>
+
       <div className={styles.settingsRow}>
         <PickerRow label="🍽️ Dinners / week" value={numDinners} setValue={setNumDinners} options={[2,3,4,5,6,7]} />
         <PickerRow label="👥 People / dinner" value={numPeople} setValue={setNumPeople} options={[1,2,3,4,5,6]} />

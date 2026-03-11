@@ -1,0 +1,74 @@
+.missingPanel {
+  background: #1e293b;
+  border-radius: 14px;
+  border: 1px solid var(--border-color, #334155);
+  padding: 40px 30px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.iconContainer {
+  margin-bottom: 20px;
+}
+
+.icon {
+  font-size: 64px;
+  display: inline-block;
+  opacity: 0.8;
+}
+
+.title {
+  color: #e2e8f0;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.message {
+  color: var(--muted-color, #94a3b8);
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+
+.instructions {
+  color: var(--muted-color, #94a3b8);
+  font-size: 14px;
+  margin: 0 0 24px;
+}
+
+.instructions strong {
+  color: #e2e8f0;
+}
+
+.infoBox {
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 24px;
+}
+
+.infoTitle {
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.infoText {
+  color: var(--muted-color, #94a3b8);
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.link {
+  color: #8b5cf6;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

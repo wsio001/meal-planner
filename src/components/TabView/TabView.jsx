@@ -17,7 +17,8 @@ export function TabView({
   onViewMealPlan,
   onPageChange,
   selectedWeekly,
-  setSelectedWeekly
+  setSelectedWeekly,
+  apiKey
 }) {
   const [page, setPage] = useState('thisweek');
 
@@ -62,6 +63,7 @@ export function TabView({
           onViewMealPlan={onViewMealPlan}
           selectedWeekly={selectedWeekly}
           setSelectedWeekly={setSelectedWeekly}
+          apiKey={apiKey}
         />
       )}
     </div>
