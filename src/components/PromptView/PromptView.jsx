@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { C } from '../../constants';
 import { GenerateButton } from '../ui';
 import { RulesEditor } from '../RulesEditor/RulesEditor';
@@ -21,7 +21,7 @@ export function PromptView({
     ? '✨ Cooking...'
     : '✨ Hit Me With A Plan ( Meals' + (isBatchEnabled ? ' + Batch )' : ' Only )');
 
-  const cssVars = {
+  const cssVars = useMemo(() => ({
     '--dim-color': C.dim,
     '--warn-color': C.warn,
     '--muted-color': C.muted,
@@ -29,7 +29,7 @@ export function PromptView({
     '--bg-color': C.bg,
     '--text-color': C.text,
     '--border-color': C.border
-  };
+  }), []);
 
   return (
     <div className={styles.generatePanel} style={cssVars}>

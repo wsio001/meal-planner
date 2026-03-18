@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { C } from '../../constants';
 import styles from './APIMissingView.module.css';
 
 export function APIMissingView() {
-  const cssVars = {
+  const cssVars = useMemo(() => ({
     '--warn-color': C.warn,
     '--muted-color': C.muted,
     '--border-color': C.border
-  };
+  }), []);
 
   return (
     <div className={styles.missingPanel} style={cssVars}>

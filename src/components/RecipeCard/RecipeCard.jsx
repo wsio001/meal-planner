@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { C } from '../../constants';
 import styles from './RecipeCard.module.css';
 
 export const RecipeCard = React.memo(function RecipeCard({ r }) {
   const b = r.isBatchCook;
 
-  const cssVars = {
+  const cssVars = useMemo(() => ({
     '--label-color': b ? C.tealText : C.accentText,
     '--teal-dark': C.tealDark,
     '--teal-color': C.teal,
@@ -13,7 +13,7 @@ export const RecipeCard = React.memo(function RecipeCard({ r }) {
     '--cuisine-color': b ? C.tealText : C.accentText,
     '--dim-color': C.dim,
     '--success-color': C.success
-  };
+  }), [b]);
 
   return (
     <div className={`${styles.recipeCard} ${b ? styles.batch : styles.weekly}`} style={cssVars}>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { C } from '../../constants';
 import { PickerRow, CalorieInput } from '../ui';
 import { SETTINGS_CONFIG } from '../../config';
@@ -70,14 +70,14 @@ export function Setting({
   const toggleTrackClass = `${styles.toggleTrack} ${localIsBatchEnabled ? styles.on : styles.off}`;
   const toggleThumbClass = `${styles.toggleThumb} ${localIsBatchEnabled ? styles.on : styles.off}`;
 
-  const cssVars = {
+  const cssVars = useMemo(() => ({
     '--teal-color': C.teal,
     '--teal-text': C.tealText,
     '--teal-dark': C.tealDark,
     '--muted-color': C.muted,
     '--dimmer-color': C.dimmer,
     '--accent-color': C.accent
-  };
+  }), []);
 
   return (
     <div className={styles.settingsPanel}>

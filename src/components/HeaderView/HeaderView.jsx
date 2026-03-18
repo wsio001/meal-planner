@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { C } from '../../constants';
 import { Setting } from '../Setting/Setting';
 import { Modal } from '../Modal/Modal';
@@ -23,12 +23,12 @@ export function HeaderView({
 }) {
   const [showSettings, setShowSettings] = useState(false);
 
-  const cssVars = {
+  const cssVars = useMemo(() => ({
     '--muted-color': C.muted,
     '--teal-color': C.teal,
     '--border-color': C.border,
     '--button-bg': showSettings ? C.border : 'transparent'
-  };
+  }), [showSettings]);
 
   return (
     <>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { C } from '../../constants';
 import { GenerateButton, HistoryMealsCounter } from '../ui';
 import { RulesEditor } from '../RulesEditor/RulesEditor';
@@ -22,10 +22,10 @@ export function RecreateRecipesView({
     ? '✨ Reuse Meals'
     : `✨ Cook ${needToFill} More Meal${needToFill > 1 ? 's' : ''}`;
 
-  const cssVars = {
+  const cssVars = useMemo(() => ({
     '--dim-color': C.dim,
     '--muted-color': C.muted
-  };
+  }), []);
 
   return (
     <div className={styles.recreatePanel} style={cssVars}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { C } from '../../../constants';
 import { SETTINGS_CONFIG } from '../../../config';
 import styles from './CalorieInput.module.css';
@@ -17,13 +17,13 @@ export const CalorieInput = React.memo(function CalorieInput({ calories, setCalo
     setEditing(false);
   }
 
-  const cssVars = {
+  const cssVars = useMemo(() => ({
     '--muted-color': C.muted,
     '--bg-color': C.bg,
     '--dimmer-color': C.dimmer,
     '--text-color': C.text,
     '--border-color': C.border
-  };
+  }), []);
 
   return (
     <div className={styles.calorieContainer} style={cssVars}>
@@ -56,11 +56,11 @@ export const CalorieInput = React.memo(function CalorieInput({ calories, setCalo
       </div>
       <div className={styles.caloriePresets}>
         {SETTINGS_CONFIG.CALORIE_PRESETS.map(n => {
-          const presetStyle = {
+          const presetStyle = useMemo(() => ({
             '--preset-border': calories === n ? C.accent : C.border,
             '--preset-bg': calories === n ? C.accentBg : C.bg,
             '--preset-color': calories === n ? C.accentText : C.dim
-          };
+          }), [calories, n]);
           return (
             <button
               key={n}

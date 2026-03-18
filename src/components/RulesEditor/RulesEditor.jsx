@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { C, DEFAULT_RULES } from '../../constants';
 import styles from './RulesEditor.module.css';
 
@@ -15,7 +15,7 @@ export const RulesEditor = React.memo(function RulesEditor({ customRules, setCus
   function updateItem(i,v) { setDraft(d=>d.map((x,j)=>j===i?v:x)); }
   function removeItem(i)   { setDraft(d=>d.filter((_,j)=>j!==i)); }
 
-  const cssVars = {
+  const cssVars = useMemo(() => ({
     '--dimmer-color': C.dimmer,
     '--accent-bg': C.accentBg,
     '--accent-text': C.accentText,
@@ -30,7 +30,7 @@ export const RulesEditor = React.memo(function RulesEditor({ customRules, setCus
     '--purple-color': C.purple,
     '--text-color': C.text,
     '--danger-color': C.danger
-  };
+  }), []);
 
   return (
     <div className={styles.container} style={cssVars}>

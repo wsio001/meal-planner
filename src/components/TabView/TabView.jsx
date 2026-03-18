@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { C } from '../../constants';
 import { ThisWeekTab } from '../ThisWeekTab/ThisWeekTab';
 import { HistoryTab } from '../History/History';
@@ -39,11 +39,11 @@ export function TabView({
     setPage('thisweek');
   };
 
-  const cssVars = {
+  const cssVars = useMemo(() => ({
     '--accent-color': C.accent,
     '--dim-color': C.dim,
     '--text-color': '#fff'
-  };
+  }), []);
 
   return (
     <div>

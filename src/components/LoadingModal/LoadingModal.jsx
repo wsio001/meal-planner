@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Modal } from '../Modal/Modal';
 import { C } from '../../constants';
 import { UI_CONFIG } from '../../config';
@@ -11,10 +11,10 @@ export function LoadingModal({
   progress,
   numDinners
 }) {
-  const cssVars = {
+  const cssVars = useMemo(() => ({
     '--accent-color': C.accent,
     '--teal-color': C.teal
-  };
+  }), []);
 
   return (
     <Modal isOpen={isOpen} closeOnBackdrop={false}>
