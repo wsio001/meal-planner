@@ -62,11 +62,21 @@ This document outlines the systematic refactoring plan for the meal planner appl
   - Smart loading (skips modal for instant retrieval)
   - 800ms delay before showing results
 
+### 7. Removed HeaderView Duplication
+- **Status**: ✅ Done (March 2026)
+- **File**: `/src/App.jsx` Lines 185-227
+- **Impact**: Eliminated duplicate HeaderView render
+- **Changes**:
+  - Moved HeaderView outside conditional
+  - HeaderView now renders once regardless of API key status
+  - Simplified JSX structure
+  - Reduced ~20 lines of duplicate code
+
 ---
 
 ## 🔴 HIGH PRIORITY - Do Next
 
-### 7. Remove HeaderView Duplication (15 min)
+### 8. Update data.js to use Storage Keys (10 min)
 
 **File**: `/src/App.jsx` Lines ~185-246
 
@@ -112,15 +122,32 @@ This document outlines the systematic refactoring plan for the meal planner appl
 )}
 ```
 
-**Impact**: Reduces code duplication, easier maintenance
+**Current**: Uses hardcoded strings `'recipes:all'` and `'recipes:batch'`
+**Need**: Import and use `STORAGE_KEYS` from config
+
+```javascript
+import { STORAGE_KEYS } from './config';
+
+// Line ~158:
+await Promise.all([
+  save(weekly, STORAGE_KEYS.RECIPES_ALL),
+  save(batch, STORAGE_KEYS.RECIPES_BATCH)
+]);
+
+// Line ~162:
+try {
+  const r = await storage.get(key || STORAGE_KEYS.RECIPES_ALL);
+  return r ? JSON.parse(r.value) : [];
+}
+```
 
 ---
 
-### 8. Add Accessibility - ARIA Labels (2 hours)
+### 9. Add Accessibility - ARIA Labels (2 hours)
 
 **Current State**: ❌ No ARIA labels exist in the codebase - significant accessibility gap
 
-#### 8.1 Scroll to Top Button
+#### 9.1 Scroll to Top Button
 
 **File**: `/src/App.jsx` Line ~253
 
@@ -141,7 +168,7 @@ This document outlines the systematic refactoring plan for the meal planner appl
 </button>
 ```
 
-#### 8.2 Settings Button
+#### 9.2 Settings Button
 
 **File**: `/src/components/HeaderView/HeaderView.jsx` Line 46
 
@@ -162,7 +189,7 @@ This document outlines the systematic refactoring plan for the meal planner appl
 </button>
 ```
 
-#### 8.3 Modal Accessibility
+#### 9.3 Modal Accessibility
 
 **File**: `/src/components/Modal/Modal.jsx`
 
@@ -180,7 +207,7 @@ This document outlines the systematic refactoring plan for the meal planner appl
 </div>
 ```
 
-#### 8.4 History Table Rows - Keyboard Navigation
+#### 9.4 History Table Rows - Keyboard Navigation
 
 **File**: `/src/components/History/History.jsx`
 
@@ -201,7 +228,7 @@ This document outlines the systematic refactoring plan for the meal planner appl
 >
 ```
 
-#### 8.5 Tab Navigation
+#### 9.5 Tab Navigation
 
 **File**: `/src/components/TabView/TabView.jsx` Line ~53
 
@@ -231,7 +258,7 @@ This document outlines the systematic refactoring plan for the meal planner appl
 )}
 ```
 
-#### 8.6 Icon Semantic Meaning
+#### 9.6 Icon Semantic Meaning
 
 **Files**: Multiple components use emoji icons
 
@@ -245,7 +272,7 @@ This document outlines the systematic refactoring plan for the meal planner appl
 </h1>
 ```
 
-#### 8.7 Loading Modal Progress Items
+#### 9.7 Loading Modal Progress Items
 
 **File**: `/src/components/LoadingModal/LoadingModal.jsx`
 
@@ -259,31 +286,6 @@ This document outlines the systematic refactoring plan for the meal planner appl
 >
   {done ? '✓' : '⏳'} {isBatch ? 'Batch ' + (i - numDinners + 1) : 'Recipe ' + (i + 1)}
 </div>
-```
-
----
-
-### 9. Update data.js to use Storage Keys (10 min)
-
-**File**: `/src/data.js`
-
-**Current**: Uses hardcoded strings
-**Need**: Import and use `STORAGE_KEYS` from config
-
-```javascript
-import { STORAGE_KEYS } from './config';
-
-// Line ~158:
-await Promise.all([
-  save(weekly, STORAGE_KEYS.RECIPES_ALL),
-  save(batch, STORAGE_KEYS.RECIPES_BATCH)
-]);
-
-// Line ~162:
-try {
-  const r = await storage.get(key || STORAGE_KEYS.RECIPES_ALL);
-  return r ? JSON.parse(r.value) : [];
-}
 ```
 
 ---
@@ -489,8 +491,8 @@ After each change, verify:
 
 | Priority     | Task Count | Estimated Time | Status          |
 |--------------|------------|----------------|-----------------|
-| ✅ Completed | 6          | ~6 hours       | Done            |
-| 🔴 High      | 3          | ~2.5 hours     | Ready to start  |
+| ✅ Completed | 7          | ~6.25 hours    | Done            |
+| 🔴 High      | 2          | ~2.25 hours    | Ready to start  |
 | 🟡 Medium    | 3          | ~6 hours       | Next sprint     |
 | 🟢 Low       | 5          | ~13 hours      | Future backlog  |
 | **TOTAL**    | **17**     | **~27.5 hours**| -               |
@@ -499,10 +501,10 @@ After each change, verify:
 
 ## 🗓️ Recommended Implementation Order
 
-### Sprint 1 (This Week - 2.5 hours)
+### Sprint 1 (This Week - 2.25 hours)
 **Focus: Clean up tech debt, improve accessibility**
 
-1. Remove HeaderView duplication (15 min)
+1. ✅ ~~Remove HeaderView duplication (15 min)~~ - **DONE**
 2. Update data.js to use STORAGE_KEYS (10 min)
 3. Add accessibility - ARIA labels (2 hours)
 4. Test everything (30 min)

@@ -182,69 +182,48 @@ function MealPlanner() {
   return (
     <div style={S.wrap}>
       <div style={S.inner}>
-        {!apiKey ? (
-          <>
-            <HeaderView
-              numDinners={numDinners}
-              setNumDinners={setNumDinners}
-              numPeople={numPeople}
-              setNumPeople={setNumPeople}
-              calories={calories}
-              setCalories={setCalories}
-              isBatchEnabled={isBatchEnabled}
-              setIsBatchEnabled={setIsBatchEnabled}
-              numBatch={numBatch}
-              setNumBatch={setNumBatch}
-              batchServings={batchServings}
-              setBatchServings={setBatchServings}
-              selectedBatch={selectedBatch}
-              apiKey={apiKey}
-              setApiKey={setApiKey}
-            />
-            <APIMissingView />
-          </>
-        ) : (
-          <>
-            <HeaderView
-              numDinners={numDinners}
-              setNumDinners={setNumDinners}
-              numPeople={numPeople}
-              setNumPeople={setNumPeople}
-              calories={calories}
-              setCalories={setCalories}
-              isBatchEnabled={isBatchEnabled}
-              setIsBatchEnabled={setIsBatchEnabled}
-              numBatch={numBatch}
-              setNumBatch={setNumBatch}
-              batchServings={batchServings}
-              setBatchServings={setBatchServings}
-              selectedBatch={selectedBatch}
-              apiKey={apiKey}
-              setApiKey={setApiKey}
-            />
+        <HeaderView
+          numDinners={numDinners}
+          setNumDinners={setNumDinners}
+          numPeople={numPeople}
+          setNumPeople={setNumPeople}
+          calories={calories}
+          setCalories={setCalories}
+          isBatchEnabled={isBatchEnabled}
+          setIsBatchEnabled={setIsBatchEnabled}
+          numBatch={numBatch}
+          setNumBatch={setNumBatch}
+          batchServings={batchServings}
+          setBatchServings={setBatchServings}
+          selectedBatch={selectedBatch}
+          apiKey={apiKey}
+          setApiKey={setApiKey}
+        />
 
-            <TabView
-              mealData={mealData}
-              numDinners={numDinners}
-              numPeople={numPeople}
-              calories={calories}
-              customRules={customRules}
-              batchCookEnabled={isBatchEnabled}
-              numBatchCook={numBatch}
-              selectedBatch={selectedBatch}
-              setSelectedBatch={setSelectedBatch}
-              selectedWeekly={selectedWeekly}
-              setSelectedWeekly={setSelectedWeekly}
-              apiKey={apiKey}
-              onGenerate={generate}
-              onRecreate={handleRecreate}
-              loading={loading}
-              error={error}
-              setCustomRules={setCustomRules}
-              rulesLoaded={rulesLoaded}
-              isBatchEnabled={isBatchEnabled}
-            />
-          </>
+        {!apiKey ? (
+          <APIMissingView />
+        ) : (
+          <TabView
+            mealData={mealData}
+            numDinners={numDinners}
+            numPeople={numPeople}
+            calories={calories}
+            customRules={customRules}
+            batchCookEnabled={isBatchEnabled}
+            numBatchCook={numBatch}
+            selectedBatch={selectedBatch}
+            setSelectedBatch={setSelectedBatch}
+            selectedWeekly={selectedWeekly}
+            setSelectedWeekly={setSelectedWeekly}
+            apiKey={apiKey}
+            onGenerate={generate}
+            onRecreate={handleRecreate}
+            loading={loading}
+            error={error}
+            setCustomRules={setCustomRules}
+            rulesLoaded={rulesLoaded}
+            isBatchEnabled={isBatchEnabled}
+          />
         )}
       </div>
 
