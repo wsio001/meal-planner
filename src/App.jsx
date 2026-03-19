@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { C, S, RULES_KEY, RULES_VER, DEFAULT_RULES } from './constants';
+import { C, S } from './constants';
 import { callClaude, buildPrompt, pickCuisines, chunkArr, pLimit } from './api';
 import { parseTabFormat, combineParsed, mergeParsedArray, saveRecipesBatched } from './data';
 import { useElapsed, usePersistedState } from './hooks';
@@ -8,9 +8,26 @@ import { TabView } from './components/TabView/TabView';
 import { HeaderView } from './components/HeaderView/HeaderView';
 import { APIMissingView } from './components/APIMissingView/APIMissingView';
 import { LoadingModal } from './components/LoadingModal/LoadingModal';
-import { DEFAULTS, STORAGE_KEYS, UI_CONFIG, API_CONFIG } from './config';
+import { SessionBanner } from './components/SessionBanner/SessionBanner';
+import { SettingsProvider, useSettings } from './contexts/SettingsContext';
+import { STORAGE_KEYS, UI_CONFIG, API_CONFIG } from './config';
 
 function MealPlanner() {
+  // Use settings from context
+  const {
+    numDinners,
+    numPeople,
+    calories,
+    isBatchEnabled,
+    numBatch,
+    batchServings,
+    apiKey,
+    customRules,
+    setCustomRules,
+    storageMode
+  } = useSettings();
+
+  // Component-specific state (not settings)
   const [loading, setLoading] = useState(false);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [stage, setStage] = useState('');
@@ -19,28 +36,8 @@ function MealPlanner() {
   const [error, setError] = useState('');
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [selectedWeekly, setSelectedWeekly] = useState([]);
-
-  const [apiKey, setApiKey, apiKeyLoaded] = usePersistedState(STORAGE_KEYS.SETTINGS_API_KEY, '', 'v1');
-
-  const [prefs, setPrefs, prefsLoaded] = usePersistedState(STORAGE_KEYS.SETTINGS_PREFS, {
-    numDinners: DEFAULTS.NUM_DINNERS,
-    numPeople: DEFAULTS.NUM_PEOPLE,
-    calories: DEFAULTS.CALORIES,
-    isBatchEnabled: DEFAULTS.IS_BATCH_ENABLED,
-    numBatch: DEFAULTS.NUM_BATCH,
-    batchServings: DEFAULTS.BATCH_SERVINGS,
-  }, 'v1');
-  const { numDinners, numPeople, calories, isBatchEnabled, numBatch, batchServings } = prefs;
-
-  const setNumDinners    = useCallback(v => setPrefs(p=>({...p,numDinners:v})),    [setPrefs]);
-  const setNumPeople     = useCallback(v => setPrefs(p=>({...p,numPeople:v})),     [setPrefs]);
-  const setCalories      = useCallback(v => setPrefs(p=>({...p,calories:v})),      [setPrefs]);
-  const setIsBatchEnabled  = useCallback(v => setPrefs(p=>({...p,isBatchEnabled:typeof v==='function'?v(p.isBatchEnabled):v})), [setPrefs]);
-  const setNumBatch      = useCallback(v => setPrefs(p=>({...p,numBatch:v})),      [setPrefs]);
-  const setBatchServings = useCallback(v => setPrefs(p=>({...p,batchServings:v})), [setPrefs]);
-
-  const [customRules, setCustomRules, rulesLoaded] = usePersistedState(RULES_KEY, DEFAULT_RULES, RULES_VER);
   const [selectedBatch, setSelectedBatch] = useState([]);
+  const [currentTab, setCurrentTab] = useState('thisweek');
   const abortRef = useRef(null);
   const elapsed = useElapsed(loading);
 
@@ -182,22 +179,11 @@ function MealPlanner() {
   return (
     <div style={S.wrap}>
       <div style={S.inner}>
+        {storageMode === 'session-only' && <SessionBanner />}
+
         <HeaderView
-          numDinners={numDinners}
-          setNumDinners={setNumDinners}
-          numPeople={numPeople}
-          setNumPeople={setNumPeople}
-          calories={calories}
-          setCalories={setCalories}
-          isBatchEnabled={isBatchEnabled}
-          setIsBatchEnabled={setIsBatchEnabled}
-          numBatch={numBatch}
-          setNumBatch={setNumBatch}
-          batchServings={batchServings}
-          setBatchServings={setBatchServings}
           selectedBatch={selectedBatch}
-          apiKey={apiKey}
-          setApiKey={setApiKey}
+          onNavigateToHistory={() => setCurrentTab('history')}
         />
 
         {!apiKey ? (
@@ -205,24 +191,16 @@ function MealPlanner() {
         ) : (
           <TabView
             mealData={mealData}
-            numDinners={numDinners}
-            numPeople={numPeople}
-            calories={calories}
-            customRules={customRules}
-            batchCookEnabled={isBatchEnabled}
-            numBatchCook={numBatch}
             selectedBatch={selectedBatch}
             setSelectedBatch={setSelectedBatch}
             selectedWeekly={selectedWeekly}
             setSelectedWeekly={setSelectedWeekly}
-            apiKey={apiKey}
             onGenerate={generate}
             onRecreate={handleRecreate}
             loading={loading}
             error={error}
-            setCustomRules={setCustomRules}
-            rulesLoaded={rulesLoaded}
-            isBatchEnabled={isBatchEnabled}
+            currentTab={currentTab}
+            onTabChange={setCurrentTab}
           />
         )}
       </div>
@@ -274,5 +252,11 @@ function MealPlanner() {
 }
 
 export default function App() {
-  return <ErrorBoundary><MealPlanner /></ErrorBoundary>;
+  return (
+    <ErrorBoundary>
+      <SettingsProvider>
+        <MealPlanner />
+      </SettingsProvider>
+    </ErrorBoundary>
+  );
 }

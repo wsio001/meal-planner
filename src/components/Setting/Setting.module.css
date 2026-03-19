@@ -1,5 +1,6 @@
 /* Settings Panel */
 .settingsPanel {
+  position: relative;
   background: #1e293b;
   border-radius: 14px;
   border: 1px solid #334155;
@@ -92,6 +93,36 @@
   font-size: 12px;
   color: #64748b;
   line-height: 1.4;
+}
+
+.apiKeyValidating {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--muted-color);
+  line-height: 1.4;
+}
+
+.apiKeyValid {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--valid-color);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.apiKeyInvalid {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--invalid-color);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.saveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 .settingsRow {

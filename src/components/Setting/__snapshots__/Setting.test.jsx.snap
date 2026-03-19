@@ -1,0 +1,1530 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Setting Component > Snapshot Tests > should match snapshot - error state 1`] = `
+<div
+  class="_settingsPanel_831c1a"
+>
+  <div
+    class="_settingsHeader_831c1a"
+  >
+    <p
+      class="_settingsTitle_831c1a"
+    >
+      Settings
+    </p>
+    <button
+      class="_saveButton_831c1a"
+      style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+    >
+      ✓ Save
+    </button>
+  </div>
+  <div
+    class="_apiKeySection_831c1a"
+  >
+    <label
+      class="_apiKeyLabel_831c1a"
+    >
+      🔑 Anthropic API Key
+    </label>
+    <input
+      class="_apiKeyInput_831c1a"
+      placeholder="sk-ant-..."
+      type="password"
+      value="sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    />
+    <p
+      class="_apiKeyValid_831c1a"
+      style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+    >
+      ✓ Valid API key
+    </p>
+  </div>
+  <div
+    class="_settingsRow_831c1a"
+  >
+    <div
+      class="_pickerContainer_2e8008"
+      style="--muted-color: #94a3b8;"
+    >
+      <label
+        class="_pickerLabel_2e8008"
+      >
+        🍽️ Dinners / week
+      </label>
+      <div
+        class="_pickerOptions_2e8008"
+      >
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          2
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #6366f1; --button-bg: #312e81; --button-color: #a5b4fc; --button-weight: 700;"
+        >
+          3
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          4
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          5
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          6
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          7
+        </button>
+      </div>
+    </div>
+    <div
+      class="_pickerContainer_2e8008"
+      style="--muted-color: #94a3b8;"
+    >
+      <label
+        class="_pickerLabel_2e8008"
+      >
+        👥 People / dinner
+      </label>
+      <div
+        class="_pickerOptions_2e8008"
+      >
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          1
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #6366f1; --button-bg: #312e81; --button-color: #a5b4fc; --button-weight: 700;"
+        >
+          2
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          3
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          4
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          5
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          6
+        </button>
+      </div>
+    </div>
+    <div
+      class="_calorieContainer_dced7d"
+      style="--muted-color: #94a3b8; --bg-color: #0f172a; --dimmer-color: #475569; --text-color: #f1f5f9; --border-color: #334155;"
+    >
+      <label
+        class="_calorieLabel_dced7d"
+      >
+        🔥 Calories / serving
+      </label>
+      <div
+        class="_calorieInputRow_dced7d"
+      >
+        <button
+          class="_calorieButton_dced7d"
+        >
+          750
+        </button>
+        <span
+          class="_calorieUnit_dced7d"
+        >
+          kcal
+        </span>
+      </div>
+      <div
+        class="_caloriePresets_dced7d"
+      >
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          400
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          500
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          600
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          700
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #6366f1; --preset-bg: #312e81; --preset-color: #a5b4fc;"
+        >
+          750
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          800
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="_settingsDivider_831c1a"
+  >
+    <div
+      class="_batchSettings_831c1a"
+    >
+      <div
+        class="_toggleContainer_831c1a _off_831c1a"
+        style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+      >
+        <div>
+          <span
+            class="_toggleLabel_831c1a _off_831c1a"
+          >
+            🍲 Batch Cook
+          </span>
+          <span
+            class="_toggleStatus_831c1a _off_831c1a"
+          >
+            Off — click to enable
+          </span>
+        </div>
+        <div
+          class="_toggleTrack_831c1a _off_831c1a"
+        >
+          <div
+            class="_toggleThumb_831c1a _off_831c1a"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="_overlay_4a1a24"
+    style="--success-bg: #064e3b; --success-color: #34d399; --warn-color: #f59e0b; --warn-bg: #78350f; --error-color: #fca5a5; --error-bg: #4c1d1d; --spinner-color: #64748b;"
+  >
+    <div
+      class="_content_4a1a24"
+    >
+      <div
+        class="_icon_4a1a24 _error_4a1a24"
+      >
+        ✗
+      </div>
+      <p
+        class="_message_4a1a24"
+      >
+        Could not save settings
+      </p>
+      <p
+        class="_detail_4a1a24"
+      >
+        Something went wrong - please try again
+      </p>
+      <div
+        class="_buttonGroup_4a1a24"
+      >
+        <button
+          class="_button_4a1a24"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Setting Component > Snapshot Tests > should match snapshot - initial state 1`] = `
+<div
+  class="_settingsPanel_831c1a"
+>
+  <div
+    class="_settingsHeader_831c1a"
+  >
+    <p
+      class="_settingsTitle_831c1a"
+    >
+      Settings
+    </p>
+    <button
+      class="_saveButton_831c1a"
+      style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+    >
+      ✓ Save
+    </button>
+  </div>
+  <div
+    class="_apiKeySection_831c1a"
+  >
+    <label
+      class="_apiKeyLabel_831c1a"
+    >
+      🔑 Anthropic API Key
+    </label>
+    <input
+      class="_apiKeyInput_831c1a"
+      placeholder="sk-ant-..."
+      type="password"
+      value=""
+    />
+    <p
+      class="_apiKeyHint_831c1a"
+    >
+      Your API key is stored locally and never sent to any server except Anthropic's API.
+    </p>
+  </div>
+  <div
+    class="_settingsRow_831c1a"
+  >
+    <div
+      class="_pickerContainer_2e8008"
+      style="--muted-color: #94a3b8;"
+    >
+      <label
+        class="_pickerLabel_2e8008"
+      >
+        🍽️ Dinners / week
+      </label>
+      <div
+        class="_pickerOptions_2e8008"
+      >
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          2
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #6366f1; --button-bg: #312e81; --button-color: #a5b4fc; --button-weight: 700;"
+        >
+          3
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          4
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          5
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          6
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          7
+        </button>
+      </div>
+    </div>
+    <div
+      class="_pickerContainer_2e8008"
+      style="--muted-color: #94a3b8;"
+    >
+      <label
+        class="_pickerLabel_2e8008"
+      >
+        👥 People / dinner
+      </label>
+      <div
+        class="_pickerOptions_2e8008"
+      >
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          1
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #6366f1; --button-bg: #312e81; --button-color: #a5b4fc; --button-weight: 700;"
+        >
+          2
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          3
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          4
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          5
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          6
+        </button>
+      </div>
+    </div>
+    <div
+      class="_calorieContainer_dced7d"
+      style="--muted-color: #94a3b8; --bg-color: #0f172a; --dimmer-color: #475569; --text-color: #f1f5f9; --border-color: #334155;"
+    >
+      <label
+        class="_calorieLabel_dced7d"
+      >
+        🔥 Calories / serving
+      </label>
+      <div
+        class="_calorieInputRow_dced7d"
+      >
+        <button
+          class="_calorieButton_dced7d"
+        >
+          750
+        </button>
+        <span
+          class="_calorieUnit_dced7d"
+        >
+          kcal
+        </span>
+      </div>
+      <div
+        class="_caloriePresets_dced7d"
+      >
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          400
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          500
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          600
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          700
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #6366f1; --preset-bg: #312e81; --preset-color: #a5b4fc;"
+        >
+          750
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          800
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="_settingsDivider_831c1a"
+  >
+    <div
+      class="_batchSettings_831c1a"
+    >
+      <div
+        class="_toggleContainer_831c1a _off_831c1a"
+        style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+      >
+        <div>
+          <span
+            class="_toggleLabel_831c1a _off_831c1a"
+          >
+            🍲 Batch Cook
+          </span>
+          <span
+            class="_toggleStatus_831c1a _off_831c1a"
+          >
+            Off — click to enable
+          </span>
+        </div>
+        <div
+          class="_toggleTrack_831c1a _off_831c1a"
+        >
+          <div
+            class="_toggleThumb_831c1a _off_831c1a"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Setting Component > Snapshot Tests > should match snapshot - saving state 1`] = `
+<div
+  class="_settingsPanel_831c1a"
+>
+  <div
+    class="_settingsHeader_831c1a"
+  >
+    <p
+      class="_settingsTitle_831c1a"
+    >
+      Settings
+    </p>
+    <button
+      class="_saveButton_831c1a"
+      disabled=""
+      style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+    >
+      ✓ Save
+    </button>
+  </div>
+  <div
+    class="_apiKeySection_831c1a"
+  >
+    <label
+      class="_apiKeyLabel_831c1a"
+    >
+      🔑 Anthropic API Key
+    </label>
+    <input
+      class="_apiKeyInput_831c1a"
+      placeholder="sk-ant-..."
+      type="password"
+      value="sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    />
+    <p
+      class="_apiKeyValid_831c1a"
+      style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+    >
+      ✓ Valid API key
+    </p>
+  </div>
+  <div
+    class="_settingsRow_831c1a"
+  >
+    <div
+      class="_pickerContainer_2e8008"
+      style="--muted-color: #94a3b8;"
+    >
+      <label
+        class="_pickerLabel_2e8008"
+      >
+        🍽️ Dinners / week
+      </label>
+      <div
+        class="_pickerOptions_2e8008"
+      >
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          2
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #6366f1; --button-bg: #312e81; --button-color: #a5b4fc; --button-weight: 700;"
+        >
+          3
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          4
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          5
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          6
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          7
+        </button>
+      </div>
+    </div>
+    <div
+      class="_pickerContainer_2e8008"
+      style="--muted-color: #94a3b8;"
+    >
+      <label
+        class="_pickerLabel_2e8008"
+      >
+        👥 People / dinner
+      </label>
+      <div
+        class="_pickerOptions_2e8008"
+      >
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          1
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #6366f1; --button-bg: #312e81; --button-color: #a5b4fc; --button-weight: 700;"
+        >
+          2
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          3
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          4
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          5
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          6
+        </button>
+      </div>
+    </div>
+    <div
+      class="_calorieContainer_dced7d"
+      style="--muted-color: #94a3b8; --bg-color: #0f172a; --dimmer-color: #475569; --text-color: #f1f5f9; --border-color: #334155;"
+    >
+      <label
+        class="_calorieLabel_dced7d"
+      >
+        🔥 Calories / serving
+      </label>
+      <div
+        class="_calorieInputRow_dced7d"
+      >
+        <button
+          class="_calorieButton_dced7d"
+        >
+          750
+        </button>
+        <span
+          class="_calorieUnit_dced7d"
+        >
+          kcal
+        </span>
+      </div>
+      <div
+        class="_caloriePresets_dced7d"
+      >
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          400
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          500
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          600
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          700
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #6366f1; --preset-bg: #312e81; --preset-color: #a5b4fc;"
+        >
+          750
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          800
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="_settingsDivider_831c1a"
+  >
+    <div
+      class="_batchSettings_831c1a"
+    >
+      <div
+        class="_toggleContainer_831c1a _off_831c1a"
+        style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+      >
+        <div>
+          <span
+            class="_toggleLabel_831c1a _off_831c1a"
+          >
+            🍲 Batch Cook
+          </span>
+          <span
+            class="_toggleStatus_831c1a _off_831c1a"
+          >
+            Off — click to enable
+          </span>
+        </div>
+        <div
+          class="_toggleTrack_831c1a _off_831c1a"
+        >
+          <div
+            class="_toggleThumb_831c1a _off_831c1a"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="_overlay_4a1a24"
+    style="--success-bg: #064e3b; --success-color: #34d399; --warn-color: #f59e0b; --warn-bg: #78350f; --error-color: #fca5a5; --error-bg: #4c1d1d; --spinner-color: #64748b;"
+  >
+    <div
+      class="_content_4a1a24"
+    >
+      <div
+        class="_spinner_4a1a24"
+      />
+      <p
+        class="_message_4a1a24"
+      >
+        Saving...
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Setting Component > Snapshot Tests > should match snapshot - success state 1`] = `
+<div
+  class="_settingsPanel_831c1a"
+>
+  <div
+    class="_settingsHeader_831c1a"
+  >
+    <p
+      class="_settingsTitle_831c1a"
+    >
+      Settings
+    </p>
+    <button
+      class="_saveButton_831c1a"
+      style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+    >
+      ✓ Save
+    </button>
+  </div>
+  <div
+    class="_apiKeySection_831c1a"
+  >
+    <label
+      class="_apiKeyLabel_831c1a"
+    >
+      🔑 Anthropic API Key
+    </label>
+    <input
+      class="_apiKeyInput_831c1a"
+      placeholder="sk-ant-..."
+      type="password"
+      value="sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    />
+    <p
+      class="_apiKeyValid_831c1a"
+      style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+    >
+      ✓ Valid API key
+    </p>
+  </div>
+  <div
+    class="_settingsRow_831c1a"
+  >
+    <div
+      class="_pickerContainer_2e8008"
+      style="--muted-color: #94a3b8;"
+    >
+      <label
+        class="_pickerLabel_2e8008"
+      >
+        🍽️ Dinners / week
+      </label>
+      <div
+        class="_pickerOptions_2e8008"
+      >
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          2
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #6366f1; --button-bg: #312e81; --button-color: #a5b4fc; --button-weight: 700;"
+        >
+          3
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          4
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          5
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          6
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          7
+        </button>
+      </div>
+    </div>
+    <div
+      class="_pickerContainer_2e8008"
+      style="--muted-color: #94a3b8;"
+    >
+      <label
+        class="_pickerLabel_2e8008"
+      >
+        👥 People / dinner
+      </label>
+      <div
+        class="_pickerOptions_2e8008"
+      >
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          1
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #6366f1; --button-bg: #312e81; --button-color: #a5b4fc; --button-weight: 700;"
+        >
+          2
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          3
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          4
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          5
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          6
+        </button>
+      </div>
+    </div>
+    <div
+      class="_calorieContainer_dced7d"
+      style="--muted-color: #94a3b8; --bg-color: #0f172a; --dimmer-color: #475569; --text-color: #f1f5f9; --border-color: #334155;"
+    >
+      <label
+        class="_calorieLabel_dced7d"
+      >
+        🔥 Calories / serving
+      </label>
+      <div
+        class="_calorieInputRow_dced7d"
+      >
+        <button
+          class="_calorieButton_dced7d"
+        >
+          750
+        </button>
+        <span
+          class="_calorieUnit_dced7d"
+        >
+          kcal
+        </span>
+      </div>
+      <div
+        class="_caloriePresets_dced7d"
+      >
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          400
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          500
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          600
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          700
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #6366f1; --preset-bg: #312e81; --preset-color: #a5b4fc;"
+        >
+          750
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          800
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="_settingsDivider_831c1a"
+  >
+    <div
+      class="_batchSettings_831c1a"
+    >
+      <div
+        class="_toggleContainer_831c1a _off_831c1a"
+        style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+      >
+        <div>
+          <span
+            class="_toggleLabel_831c1a _off_831c1a"
+          >
+            🍲 Batch Cook
+          </span>
+          <span
+            class="_toggleStatus_831c1a _off_831c1a"
+          >
+            Off — click to enable
+          </span>
+        </div>
+        <div
+          class="_toggleTrack_831c1a _off_831c1a"
+        >
+          <div
+            class="_toggleThumb_831c1a _off_831c1a"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="_overlay_4a1a24"
+    style="--success-bg: #064e3b; --success-color: #34d399; --warn-color: #f59e0b; --warn-bg: #78350f; --error-color: #fca5a5; --error-bg: #4c1d1d; --spinner-color: #64748b;"
+  >
+    <div
+      class="_content_4a1a24"
+    >
+      <div
+        class="_icon_4a1a24 _success_4a1a24"
+      >
+        ✓
+      </div>
+      <p
+        class="_message_4a1a24"
+      >
+        Saved
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Setting Component > Snapshot Tests > should match snapshot - with invalid API key 1`] = `
+<div
+  class="_settingsPanel_831c1a"
+>
+  <div
+    class="_settingsHeader_831c1a"
+  >
+    <p
+      class="_settingsTitle_831c1a"
+    >
+      Settings
+    </p>
+    <button
+      class="_saveButton_831c1a"
+      disabled=""
+      style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+    >
+      ✓ Save
+    </button>
+  </div>
+  <div
+    class="_apiKeySection_831c1a"
+  >
+    <label
+      class="_apiKeyLabel_831c1a"
+    >
+      🔑 Anthropic API Key
+    </label>
+    <input
+      class="_apiKeyInput_831c1a"
+      placeholder="sk-ant-..."
+      type="password"
+      value="invalid-key"
+    />
+    <p
+      class="_apiKeyInvalid_831c1a"
+      style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+    >
+      ✗ 
+      Please enter a valid API key
+    </p>
+  </div>
+  <div
+    class="_settingsRow_831c1a"
+  >
+    <div
+      class="_pickerContainer_2e8008"
+      style="--muted-color: #94a3b8;"
+    >
+      <label
+        class="_pickerLabel_2e8008"
+      >
+        🍽️ Dinners / week
+      </label>
+      <div
+        class="_pickerOptions_2e8008"
+      >
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          2
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #6366f1; --button-bg: #312e81; --button-color: #a5b4fc; --button-weight: 700;"
+        >
+          3
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          4
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          5
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          6
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          7
+        </button>
+      </div>
+    </div>
+    <div
+      class="_pickerContainer_2e8008"
+      style="--muted-color: #94a3b8;"
+    >
+      <label
+        class="_pickerLabel_2e8008"
+      >
+        👥 People / dinner
+      </label>
+      <div
+        class="_pickerOptions_2e8008"
+      >
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          1
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #6366f1; --button-bg: #312e81; --button-color: #a5b4fc; --button-weight: 700;"
+        >
+          2
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          3
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          4
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          5
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          6
+        </button>
+      </div>
+    </div>
+    <div
+      class="_calorieContainer_dced7d"
+      style="--muted-color: #94a3b8; --bg-color: #0f172a; --dimmer-color: #475569; --text-color: #f1f5f9; --border-color: #334155;"
+    >
+      <label
+        class="_calorieLabel_dced7d"
+      >
+        🔥 Calories / serving
+      </label>
+      <div
+        class="_calorieInputRow_dced7d"
+      >
+        <button
+          class="_calorieButton_dced7d"
+        >
+          750
+        </button>
+        <span
+          class="_calorieUnit_dced7d"
+        >
+          kcal
+        </span>
+      </div>
+      <div
+        class="_caloriePresets_dced7d"
+      >
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          400
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          500
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          600
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          700
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #6366f1; --preset-bg: #312e81; --preset-color: #a5b4fc;"
+        >
+          750
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          800
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="_settingsDivider_831c1a"
+  >
+    <div
+      class="_batchSettings_831c1a"
+    >
+      <div
+        class="_toggleContainer_831c1a _off_831c1a"
+        style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+      >
+        <div>
+          <span
+            class="_toggleLabel_831c1a _off_831c1a"
+          >
+            🍲 Batch Cook
+          </span>
+          <span
+            class="_toggleStatus_831c1a _off_831c1a"
+          >
+            Off — click to enable
+          </span>
+        </div>
+        <div
+          class="_toggleTrack_831c1a _off_831c1a"
+        >
+          <div
+            class="_toggleThumb_831c1a _off_831c1a"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Setting Component > Snapshot Tests > should match snapshot - with valid API key 1`] = `
+<div
+  class="_settingsPanel_831c1a"
+>
+  <div
+    class="_settingsHeader_831c1a"
+  >
+    <p
+      class="_settingsTitle_831c1a"
+    >
+      Settings
+    </p>
+    <button
+      class="_saveButton_831c1a"
+      style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+    >
+      ✓ Save
+    </button>
+  </div>
+  <div
+    class="_apiKeySection_831c1a"
+  >
+    <label
+      class="_apiKeyLabel_831c1a"
+    >
+      🔑 Anthropic API Key
+    </label>
+    <input
+      class="_apiKeyInput_831c1a"
+      placeholder="sk-ant-..."
+      type="password"
+      value="sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    />
+    <p
+      class="_apiKeyValid_831c1a"
+      style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+    >
+      ✓ Valid API key
+    </p>
+  </div>
+  <div
+    class="_settingsRow_831c1a"
+  >
+    <div
+      class="_pickerContainer_2e8008"
+      style="--muted-color: #94a3b8;"
+    >
+      <label
+        class="_pickerLabel_2e8008"
+      >
+        🍽️ Dinners / week
+      </label>
+      <div
+        class="_pickerOptions_2e8008"
+      >
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          2
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #6366f1; --button-bg: #312e81; --button-color: #a5b4fc; --button-weight: 700;"
+        >
+          3
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          4
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          5
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          6
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          7
+        </button>
+      </div>
+    </div>
+    <div
+      class="_pickerContainer_2e8008"
+      style="--muted-color: #94a3b8;"
+    >
+      <label
+        class="_pickerLabel_2e8008"
+      >
+        👥 People / dinner
+      </label>
+      <div
+        class="_pickerOptions_2e8008"
+      >
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          1
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #6366f1; --button-bg: #312e81; --button-color: #a5b4fc; --button-weight: 700;"
+        >
+          2
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          3
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          4
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          5
+        </button>
+        <button
+          class="_pickerButton_2e8008"
+          style="--button-border: #334155; --button-bg: #0f172a; --button-color: #64748b; --button-weight: 400;"
+        >
+          6
+        </button>
+      </div>
+    </div>
+    <div
+      class="_calorieContainer_dced7d"
+      style="--muted-color: #94a3b8; --bg-color: #0f172a; --dimmer-color: #475569; --text-color: #f1f5f9; --border-color: #334155;"
+    >
+      <label
+        class="_calorieLabel_dced7d"
+      >
+        🔥 Calories / serving
+      </label>
+      <div
+        class="_calorieInputRow_dced7d"
+      >
+        <button
+          class="_calorieButton_dced7d"
+        >
+          750
+        </button>
+        <span
+          class="_calorieUnit_dced7d"
+        >
+          kcal
+        </span>
+      </div>
+      <div
+        class="_caloriePresets_dced7d"
+      >
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          400
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          500
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          600
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          700
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #6366f1; --preset-bg: #312e81; --preset-color: #a5b4fc;"
+        >
+          750
+        </button>
+        <button
+          class="_caloriePreset_dced7d"
+          style="--preset-border: #334155; --preset-bg: #0f172a; --preset-color: #64748b;"
+        >
+          800
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="_settingsDivider_831c1a"
+  >
+    <div
+      class="_batchSettings_831c1a"
+    >
+      <div
+        class="_toggleContainer_831c1a _off_831c1a"
+        style="--teal-color: #2dd4bf; --teal-text: #99f6e4; --teal-dark: #0a2020; --muted-color: #94a3b8; --dimmer-color: #475569; --accent-color: #6366f1; --valid-color: #34d399; --invalid-color: #fca5a5;"
+      >
+        <div>
+          <span
+            class="_toggleLabel_831c1a _off_831c1a"
+          >
+            🍲 Batch Cook
+          </span>
+          <span
+            class="_toggleStatus_831c1a _off_831c1a"
+          >
+            Off — click to enable
+          </span>
+        </div>
+        <div
+          class="_toggleTrack_831c1a _off_831c1a"
+        >
+          <div
+            class="_toggleThumb_831c1a _off_831c1a"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -2,26 +2,25 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { C } from '../../constants';
 import { PickerRow, CalorieInput } from '../ui';
 import { SETTINGS_CONFIG } from '../../config';
+import { useSettings } from '../../contexts/SettingsContext';
+import { SaveStateOverlay } from '../SaveStateOverlay/SaveStateOverlay';
 import styles from './Setting.module.css';
 
-export function Setting({
-  numDinners,
-  setNumDinners,
-  numPeople,
-  setNumPeople,
-  calories,
-  setCalories,
-  isBatchEnabled,
-  setIsBatchEnabled,
-  numBatch,
-  setNumBatch,
-  batchServings,
-  setBatchServings,
-  selectedBatch,
-  apiKey,
-  setApiKey,
-  onClose
-}) {
+export function Setting({ selectedBatch, onClose, onGoToHistory }) {
+  // Get settings from context
+  const {
+    numDinners,
+    numPeople,
+    calories,
+    isBatchEnabled,
+    numBatch,
+    batchServings,
+    apiKey,
+    saveSettings,
+    setApiKey,
+    storageMode
+  } = useSettings();
+
   // Local state for settings (not saved until Save button is clicked)
   const [localNumDinners, setLocalNumDinners] = useState(numDinners);
   const [localNumPeople, setLocalNumPeople] = useState(numPeople);
@@ -30,9 +29,19 @@ export function Setting({
   const [localNumBatch, setLocalNumBatch] = useState(numBatch);
   const [localBatchServings, setLocalBatchServings] = useState(batchServings);
   const [localApiKey, setLocalApiKey] = useState(apiKey);
-  const [isSaved, setIsSaved] = useState(false);
 
-  // Sync local state when props change (e.g., when reopening Settings)
+  // API Key validation state
+  const [apiKeyValidation, setApiKeyValidation] = useState({
+    status: 'idle', // 'idle' | 'checking' | 'valid' | 'invalid'
+    message: ''
+  });
+
+  // Save state overlay
+  const [saveState, setSaveState] = useState(null); // null | 'saving' | 'success' | 'warning' | 'error'
+  const [saveMessage, setSaveMessage] = useState('');
+  const [saveDetail, setSaveDetail] = useState('');
+
+  // Sync local state when context values change (e.g., when reopening Settings)
   useEffect(() => {
     setLocalNumDinners(numDinners);
     setLocalNumPeople(numPeople);
@@ -43,25 +52,111 @@ export function Setting({
     setLocalApiKey(apiKey);
   }, [numDinners, numPeople, calories, isBatchEnabled, numBatch, batchServings, apiKey]);
 
-  const handleSave = () => {
-    setNumDinners(localNumDinners);
-    setNumPeople(localNumPeople);
-    setCalories(localCalories);
-    setIsBatchEnabled(localIsBatchEnabled);
-    setNumBatch(localNumBatch);
-    setBatchServings(localBatchServings);
-    setApiKey(localApiKey);
+  // Validate API key with debounce
+  useEffect(() => {
+    if (!localApiKey || !localApiKey.trim()) {
+      setApiKeyValidation({ status: 'idle', message: '' });
+      return;
+    }
 
-    // Show saved state
-    setIsSaved(true);
+    setApiKeyValidation({ status: 'checking', message: '' });
 
-    // Close modal after delay
-    setTimeout(() => {
-      setIsSaved(false);
-      if (onClose) {
-        onClose();
+    const timer = setTimeout(() => {
+      if (!localApiKey.startsWith('sk-ant-')) {
+        setApiKeyValidation({
+          status: 'invalid',
+          message: 'Please enter a valid API key'
+        });
+      } else if (localApiKey.length < 40) {
+        setApiKeyValidation({
+          status: 'invalid',
+          message: 'API key is too short'
+        });
+      } else {
+        setApiKeyValidation({ status: 'valid', message: '' });
       }
-    }, 1500);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [localApiKey]);
+
+  const handleSave = async () => {
+    setSaveState('saving');
+    setSaveMessage('Saving...');
+
+    try {
+      // Minimum 500ms loading state
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Save API key
+      await setApiKey(localApiKey);
+
+      // Save settings - returns { success, mode }
+      const result = await saveSettings({
+        numDinners: localNumDinners,
+        numPeople: localNumPeople,
+        calories: localCalories,
+        isBatchEnabled: localIsBatchEnabled,
+        numBatch: localNumBatch,
+        batchServings: localBatchServings
+      });
+
+      // Check if we're in session-only mode immediately from the result
+      if (result.mode === 'session-only') {
+        setSaveState('warning');
+        setSaveMessage('Settings saved for this session');
+        setSaveDetail('Storage is disabled - your settings won\'t persist after closing this page');
+        // Don't auto-close, let user acknowledge
+      } else {
+        setSaveState('success');
+        setSaveMessage('Saved');
+        setTimeout(() => {
+          setSaveState(null);
+          if (onClose) {
+            onClose();
+          }
+        }, 1000);
+      }
+
+    } catch (error) {
+      setSaveState(null);
+
+      let message = 'Could not save settings';
+      let detail = 'Something went wrong - please try again';
+
+      if (error.message === 'QUOTA_EXCEEDED') {
+        message = 'Could not save settings - storage is full';
+        detail = 'You might have too much meal history saved';
+      }
+
+      setSaveState('error');
+      setSaveMessage(message);
+      setSaveDetail(detail);
+      // Stay open so user can retry or go to history
+    }
+  };
+
+  const handleRetry = () => {
+    setSaveState(null);
+    handleSave();
+  };
+
+  const handleGoToHistory = () => {
+    setSaveState(null);
+    // Switch to history tab first (immediate), then close modal
+    if (onGoToHistory) {
+      onGoToHistory();
+    }
+    if (onClose) {
+      onClose();
+    }
+  };
+
+  const handleWarningClose = () => {
+    setSaveState(null);
+    if (onClose) {
+      onClose();
+    }
   };
 
   const toggleContainerClass = `${styles.toggleContainer} ${localIsBatchEnabled ? styles.on : styles.off}`;
@@ -76,8 +171,15 @@ export function Setting({
     '--teal-dark': C.tealDark,
     '--muted-color': C.muted,
     '--dimmer-color': C.dimmer,
-    '--accent-color': C.accent
+    '--accent-color': C.accent,
+    '--valid-color': C.success,
+    '--invalid-color': '#fca5a5'
   }), []);
+
+  const isSaveDisabled =
+    saveState === 'saving' ||
+    apiKeyValidation.status === 'invalid' ||
+    apiKeyValidation.status === 'checking';
 
   return (
     <div className={styles.settingsPanel}>
@@ -86,11 +188,11 @@ export function Setting({
         {onClose && (
           <button
             onClick={handleSave}
-            className={`${styles.saveButton} ${isSaved ? styles.saved : ''}`}
+            className={styles.saveButton}
             style={cssVars}
-            disabled={isSaved}
+            disabled={isSaveDisabled}
           >
-            {isSaved ? '✓ Saved' : '✓ Save'}
+            ✓ Save
           </button>
         )}
       </div>
@@ -105,9 +207,26 @@ export function Setting({
           placeholder="sk-ant-..."
           className={styles.apiKeyInput}
         />
-        <p className={styles.apiKeyHint}>
-          Your API key is stored locally and never sent to any server except Anthropic's API.
-        </p>
+        {apiKeyValidation.status === 'checking' && (
+          <p className={styles.apiKeyValidating} style={cssVars}>
+            ⏳ Checking...
+          </p>
+        )}
+        {apiKeyValidation.status === 'valid' && (
+          <p className={styles.apiKeyValid} style={cssVars}>
+            ✓ Valid API key
+          </p>
+        )}
+        {apiKeyValidation.status === 'invalid' && (
+          <p className={styles.apiKeyInvalid} style={cssVars}>
+            ✗ {apiKeyValidation.message}
+          </p>
+        )}
+        {apiKeyValidation.status === 'idle' && (
+          <p className={styles.apiKeyHint}>
+            Your API key is stored locally and never sent to any server except Anthropic's API.
+          </p>
+        )}
       </div>
 
       <div className={styles.settingsRow}>
@@ -139,6 +258,16 @@ export function Setting({
           )}
         </div>
       </div>
+
+      {/* Save State Overlay */}
+      <SaveStateOverlay
+        state={saveState}
+        message={saveMessage}
+        detail={saveDetail}
+        onRetry={saveState === 'error' && !saveMessage.includes('storage is full') ? handleRetry : null}
+        onGoToHistory={saveState === 'error' && saveMessage.includes('storage is full') ? handleGoToHistory : null}
+        onClose={saveState === 'warning' ? handleWarningClose : null}
+      />
     </div>
   );
 }

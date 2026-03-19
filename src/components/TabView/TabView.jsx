@@ -26,17 +26,23 @@ export function TabView({
   error,
   setCustomRules,
   rulesLoaded,
-  isBatchEnabled
+  isBatchEnabled,
+  currentTab,
+  onTabChange
 }) {
-  const [page, setPage] = useState('thisweek');
+  const page = currentTab || 'thisweek';
 
   const handlePageChange = (newPage) => {
-    setPage(newPage);
+    if (onTabChange) {
+      onTabChange(newPage);
+    }
   };
 
   const handleViewMealPlan = (mealPlan) => {
     // When viewing a meal plan from history, switch to This Week tab
-    setPage('thisweek');
+    if (onTabChange) {
+      onTabChange('thisweek');
+    }
   };
 
   const cssVars = useMemo(() => ({

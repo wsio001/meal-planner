@@ -2,25 +2,11 @@ import React, { useState, useMemo } from 'react';
 import { C } from '../../constants';
 import { Setting } from '../Setting/Setting';
 import { Modal } from '../Modal/Modal';
+import { useSettings } from '../../contexts/SettingsContext';
 import styles from './HeaderView.module.css';
 
-export function HeaderView({
-  numDinners,
-  setNumDinners,
-  numPeople,
-  setNumPeople,
-  calories,
-  setCalories,
-  isBatchEnabled,
-  setIsBatchEnabled,
-  numBatch,
-  setNumBatch,
-  batchServings,
-  setBatchServings,
-  selectedBatch,
-  apiKey,
-  setApiKey
-}) {
+export function HeaderView({ selectedBatch, onNavigateToHistory }) {
+  const { numDinners, numPeople, calories, isBatchEnabled, numBatch, batchServings } = useSettings();
   const [showSettings, setShowSettings] = useState(false);
 
   const cssVars = useMemo(() => ({
@@ -29,6 +15,10 @@ export function HeaderView({
     '--border-color': C.border,
     '--button-bg': showSettings ? C.border : 'transparent'
   }), [showSettings]);
+
+  const handleCloseSettings = () => {
+    setShowSettings(false);
+  };
 
   return (
     <>
@@ -49,24 +39,17 @@ export function HeaderView({
         </button>
       </div>
 
-      <Modal isOpen={showSettings} onClose={() => setShowSettings(false)}>
+      <Modal isOpen={showSettings} onClose={handleCloseSettings}>
         <Setting
-          numDinners={numDinners}
-          setNumDinners={setNumDinners}
-          numPeople={numPeople}
-          setNumPeople={setNumPeople}
-          calories={calories}
-          setCalories={setCalories}
-          isBatchEnabled={isBatchEnabled}
-          setIsBatchEnabled={setIsBatchEnabled}
-          numBatch={numBatch}
-          setNumBatch={setNumBatch}
-          batchServings={batchServings}
-          setBatchServings={setBatchServings}
           selectedBatch={selectedBatch}
-          apiKey={apiKey}
-          setApiKey={setApiKey}
-          onClose={() => setShowSettings(false)}
+          onClose={handleCloseSettings}
+          onGoToHistory={() => {
+            // Navigate first for crisp transition, then close modal
+            if (onNavigateToHistory) {
+              onNavigateToHistory();
+            }
+            handleCloseSettings();
+          }}
         />
       </Modal>
     </>
