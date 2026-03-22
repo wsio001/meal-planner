@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { flushSync } from 'react-dom';
 import { C } from '../../constants';
 import { Setting } from '../Setting/Setting';
 import { Modal } from '../Modal/Modal';
@@ -44,10 +45,13 @@ export function HeaderView({ selectedBatch, onNavigateToHistory }) {
           selectedBatch={selectedBatch}
           onClose={handleCloseSettings}
           onGoToHistory={() => {
-            // Navigate first for crisp transition, then close modal
+            // Use flushSync to force immediate tab switch before modal closes
             if (onNavigateToHistory) {
-              onNavigateToHistory();
+              flushSync(() => {
+                onNavigateToHistory();
+              });
             }
+            // Now close modal - user already sees History tab
             handleCloseSettings();
           }}
         />

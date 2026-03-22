@@ -2,8 +2,8 @@
 
 This document outlines the systematic refactoring plan for the meal planner application, organized by priority and estimated effort.
 
-**Last Updated**: March 18, 2026 - **AUDITED** ✅
-**Based on**: Complete codebase verification + Task #10 implementation
+**Last Updated**: March 21, 2026 - **AUDITED** ✅
+**Based on**: Complete codebase verification + Task #10 implementation + Security enhancements
 
 ---
 
@@ -110,11 +110,41 @@ This document outlines the systematic refactoring plan for the meal planner appl
 - **Performance Improvement**: Reduced object recreation on every render across 10+ components
 - **Note**: History.jsx and MealView.jsx already had useMemo, bringing total to 12 components optimized
 
+### 10. Add Security Enhancements ✅
+- **Status**: ✅ Completed (March 21, 2026)
+- **Impact**: Protection against XSS, code injection, and API key theft
+- **Changes Implemented**:
+  1. ✅ **Content Security Policy (CSP)** - Added to `index.html`
+     - Blocks external scripts from loading
+     - Prevents data exfiltration to unauthorized domains
+     - Protects against clickjacking (frame-ancestors 'none')
+     - Allows only self + api.anthropic.com connections
+  2. ✅ **API Key Security Warning** - Added to Settings modal
+     - Yellow warning box with security notices
+     - Shows current domain (window.location.hostname)
+     - Warns users about phishing/clone sites
+     - Explains local-only storage
+- **Files Modified**:
+  - `index.html` - Added CSP meta tag
+  - `src/components/Setting/Setting.jsx` - Added security notice UI
+  - `src/components/Setting/Setting.module.css` - Styled warning box
+- **Documentation Created**:
+  - `SECURITY_ANALYSIS.md` - Complete security threat analysis
+  - `CSP_GUIDE.md` - Detailed CSP explanation and implementation
+  - `HOW_CODE_GETS_COMPROMISED.md` - Real-world attack scenarios
+- **Protection Against**:
+  - ✅ XSS (Cross-Site Scripting) attacks
+  - ✅ Code injection via hosting compromise
+  - ✅ Supply chain attacks (malicious dependencies)
+  - ✅ Data exfiltration attempts
+  - ✅ Clickjacking attacks
+  - ✅ API key phishing (via user education)
+
 ---
 
 ## 🔴 HIGH PRIORITY - Not Started
 
-### 10. Add Accessibility - ARIA Labels (2 hours)
+### 11. Add Accessibility - ARIA Labels (2 hours)
 
 **Current State**: ❌ **VERIFIED: Zero aria-labels in codebase** - Critical accessibility gap
 
@@ -225,7 +255,7 @@ This task has NOT been started. The codebase currently has:
 
 ## 🟡 MEDIUM PRIORITY - Not Started
 
-### 11. Add Toast Notification System (3 hours)
+### 12. Add Toast Notification System (3 hours)
 
 **Current State**: ❌ **VERIFIED: No Toast component exists**
 
@@ -246,7 +276,7 @@ This task has NOT been started. The codebase currently has:
 
 ---
 
-### 12. Enhance Error Boundary (1 hour)
+### 13. Enhance Error Boundary (1 hour)
 
 **Current State**: ⚠️ **VERIFIED: Basic ErrorBoundary exists but needs enhancement**
 
@@ -271,7 +301,7 @@ This task has NOT been started. The codebase currently has:
 
 ## 🟢 LOW PRIORITY - Not Started
 
-### 13. Create Settings Context (3 hours)
+### 14. Create Settings Context (3 hours)
 
 **Current State**: ❌ **VERIFIED: No context system exists**
 
@@ -291,7 +321,7 @@ App.jsx (12 props)
 
 ---
 
-### 14. Split History.jsx into Separate Files (4 hours)
+### 15. Split History.jsx into Separate Files (4 hours)
 
 **Current State**: ❌ **VERIFIED: Single 303-line file**
 
@@ -307,7 +337,7 @@ App.jsx (12 props)
 
 ---
 
-### 15. Split data.js into Domain Modules (2 hours)
+### 16. Split data.js into Domain Modules (2 hours)
 
 **Current State**: ❌ **VERIFIED: Single 163-line file**
 
@@ -322,7 +352,7 @@ App.jsx (12 props)
 
 ---
 
-### 16. API Key Encryption Enhancement (2 hours)
+### 17. API Key Encryption Enhancement (2 hours)
 
 **Current State**: ⚠️ **API key stored in plain text localStorage**
 
@@ -337,7 +367,7 @@ App.jsx (12 props)
 
 ---
 
-### 17. Add Loading Skeletons (2 hours)
+### 18. Add Loading Skeletons (2 hours)
 
 **Current State**: ❌ **VERIFIED: No skeleton components exist**
 
@@ -372,11 +402,11 @@ After each change, verify:
 
 | Priority     | Task Count | Estimated Time | Status                    |
 |--------------|------------|----------------|---------------------------|
-| ✅ Completed | 9          | ~8.5 hours     | **100% Complete**         |
+| ✅ Completed | 10         | ~10 hours      | **100% Complete**         |
 | 🔴 High      | 1          | ~2 hours       | **0% Started**            |
 | 🟡 Medium    | 2          | ~4 hours       | **0% Started**            |
 | 🟢 Low       | 5          | ~13 hours      | **0% Started**            |
-| **TOTAL**    | **17**     | **~27.5 hours**| **33% Complete (9/17)**   |
+| **TOTAL**    | **18**     | **~29 hours**  | **36% Complete (10/18)**  |
 
 ---
 
@@ -388,7 +418,8 @@ After each change, verify:
 1. ✅ ~~Remove HeaderView duplication~~ - **DONE**
 2. ✅ ~~Update data.js to use STORAGE_KEYS~~ - **DONE**
 3. ✅ ~~Add useMemo for cssVars~~ - **DONE (March 18, 2026)**
-4. ❌ **Add accessibility - ARIA labels (2 hours)** ← START HERE
+4. ✅ ~~Add security enhancements~~ - **DONE (March 21, 2026)**
+5. ❌ **Add accessibility - ARIA labels (2 hours)** ← START HERE
    - Critical for screen reader users
    - Improves SEO and usability
    - Low effort, high impact
@@ -430,6 +461,7 @@ After each change, verify:
 - **Modal system is excellent** - Well implemented with good UX
 - **Code duplication eliminated** - HeaderView refactor successful
 - **Performance optimized** - All 12 components now use useMemo for cssVars (March 18, 2026)
+- **Security hardened** - CSP + API key warnings protect against XSS and phishing (March 21, 2026)
 
 ### ⚠️ Areas Needing Attention
 - **Zero accessibility attributes** - This is the #1 priority
@@ -440,14 +472,15 @@ After each change, verify:
 ### 📝 Assessment
 - **Overall code quality**: Good
 - **Architecture**: Solid foundation
-- **Completion rate**: 33% (9/17 tasks)
+- **Completion rate**: 36% (10/18 tasks)
+- **Security posture**: Strong (CSP + user education)
 - **Critical gaps**: Accessibility (#1 priority)
 
 ---
 
 ## 🎯 Next Immediate Action
 
-**START WITH TASK #10: Add Accessibility - ARIA Labels**
+**START WITH TASK #11: Add Accessibility - ARIA Labels**
 
 This task is:
 - ✅ High impact (affects all users, especially those using assistive tech)
@@ -462,6 +495,6 @@ This task is:
 
 ---
 
-*Last Updated: March 18, 2026*
-*Version: 4.0 - Task #10 (useMemo optimization) COMPLETED ✅*
-*Previous Update: March 16, 2026 (Initial Audit)*
+*Last Updated: March 21, 2026*
+*Version: 5.0 - Task #10 (Security Enhancements) COMPLETED ✅*
+*Previous Updates: March 18, 2026 (useMemo), March 16, 2026 (Initial Audit)*

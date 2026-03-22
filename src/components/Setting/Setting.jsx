@@ -199,6 +199,19 @@ export function Setting({ selectedBatch, onClose, onGoToHistory }) {
 
       {/* API Key Section */}
       <div className={styles.apiKeySection}>
+        {/* Security Warning */}
+        <div className={styles.securityNotice}>
+          <div className={styles.noticeHeader}>
+            <span className={styles.noticeIcon}>🔒</span>
+            <strong>Security Notice</strong>
+          </div>
+          <ul className={styles.noticeList}>
+            <li>Only enter your API key on <strong>{window.location.hostname}</strong></li>
+            <li>Never share your API key with anyone</li>
+            <li>Your key is stored locally in your browser only</li>
+          </ul>
+        </div>
+
         <label className={styles.apiKeyLabel}>🔑 Anthropic API Key</label>
         <input
           type="password"
