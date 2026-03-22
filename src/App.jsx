@@ -10,6 +10,7 @@ import { APIMissingView } from './components/APIMissingView/APIMissingView';
 import { LoadingModal } from './components/LoadingModal/LoadingModal';
 import { SessionBanner } from './components/SessionBanner/SessionBanner';
 import { SettingsProvider, useSettings } from './contexts/SettingsContext';
+import { ToastProvider } from './components/Toast/ToastContainer';
 import { STORAGE_KEYS, UI_CONFIG, API_CONFIG } from './config';
 
 function MealPlanner() {
@@ -140,12 +141,14 @@ function MealPlanner() {
         combined.recipes.filter(r=>r.isBatchCook&&!selectedBatch.some(s=>s.name===r.name))
       );
 
-      // Add delay before closing modal and showing results (skip if no loading modal)
-      if (!skipLoadingModal) {
-        await new Promise(resolve => setTimeout(resolve, 800));
-      }
+      // Set meal data - modal will auto-close after showing success animation
       setMealData(combined);
-      setShowLoadingModal(false);
+
+      // If we skipped loading modal, close it immediately
+      if (skipLoadingModal) {
+        setShowLoadingModal(false);
+      }
+      // Otherwise, modal will close itself after 1s success animation
     } catch(e) {
       if(e.name!=='AbortError') {
         setError('Something went wrong: '+e.message);
@@ -171,6 +174,10 @@ function MealPlanner() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [numDinners, selectedWeekly.length]);
+
+  const handleLoadingComplete = useCallback(() => {
+    setShowLoadingModal(false);
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -246,6 +253,7 @@ function MealPlanner() {
         elapsed={elapsed}
         progress={progress}
         numDinners={numDinners}
+        onComplete={handleLoadingComplete}
       />
     </div>
   );
@@ -254,9 +262,11 @@ function MealPlanner() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <SettingsProvider>
-        <MealPlanner />
-      </SettingsProvider>
+      <ToastProvider>
+        <SettingsProvider>
+          <MealPlanner />
+        </SettingsProvider>
+      </ToastProvider>
     </ErrorBoundary>
   );
 }

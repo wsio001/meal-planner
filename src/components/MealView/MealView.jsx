@@ -1,14 +1,13 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { C } from '../../constants';
 import { SectionHeader } from '../ui';
 import { RecipeCard } from '../RecipeCard/RecipeCard';
+import { useToast } from '../Toast/ToastContainer';
 import styles from './MealView.module.css';
 
 export const MealView = React.memo(function MealView({ mealData, onBack, backLabel }) {
   const [tab, setTab] = useState('overview');
-  const [copied, setCopied] = useState(false);
-  const copyTimer = useRef(null);
-  useEffect(() => () => clearTimeout(copyTimer.current), []);
+  const { showToast } = useToast();
   const wR = useMemo(() => mealData.recipes.filter(r => !r.isBatchCook), [mealData.recipes]);
   const bR = useMemo(() => mealData.recipes.filter(r =>  r.isBatchCook), [mealData.recipes]);
 
@@ -16,10 +15,11 @@ export const MealView = React.memo(function MealView({ mealData, onBack, backLab
     const text = Object.entries(mealData.iphoneNotes||{}).filter(([,v])=>v.length).map(([,v])=>v.join('\n')).join('\n\n');
     try {
       await navigator.clipboard.writeText(text);
-      setCopied(true);
-      clearTimeout(copyTimer.current);
-      copyTimer.current = setTimeout(() => setCopied(false), 2000);
-    } catch(e) { console.error('Clipboard write failed:', e); }
+      showToast('Copied to clipboard!', 'success');
+    } catch(e) {
+      console.error('Clipboard write failed:', e);
+      showToast('Failed to copy to clipboard', 'error');
+    }
   }
 
   const cssVars = {
@@ -28,9 +28,9 @@ export const MealView = React.memo(function MealView({ mealData, onBack, backLab
     '--text-color': C.text,
     '--muted-color': C.muted,
     '--teal-text': C.tealText,
-    '--copy-bg': copied?C.successBg:C.card,
-    '--copy-color': copied?C.success:C.purple,
-    '--copy-border': copied?C.success:C.purple,
+    '--copy-bg': C.card,
+    '--copy-color': C.purple,
+    '--copy-border': C.purple,
     '--bg-color': C.bg
   };
 
@@ -90,7 +90,7 @@ export const MealView = React.memo(function MealView({ mealData, onBack, backLab
             <div>
               <div className={styles.groceryHeader}>
                 <h2 className={styles.groceryTitle}>Combined Grocery List</h2>
-                <button onClick={copyNotes} className={styles.copyButton} style={cssVars}>{copied?'✓ Copied!':'📋 Copy for Notes'}</button>
+                <button onClick={copyNotes} className={styles.copyButton} style={cssVars}>📋 Copy for Notes</button>
               </div>
               {bR.length>0 && <div className={styles.groceryNote}>🍲 Batch cook ingredients are included in this list.</div>}
               <div className={styles.tableWrapper}>
