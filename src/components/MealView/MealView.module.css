@@ -144,6 +144,11 @@
   margin: 0;
 }
 
+.groceryButtons {
+  display: flex;
+  gap: 10px;
+}
+
 .copyButton {
   border-radius: 8px;
   padding: 7px 16px;
@@ -153,6 +158,52 @@
   background: var(--copy-bg);
   color: var(--copy-color);
   border: 1px solid var(--copy-border);
+  transition: all 0.3s ease;
+}
+
+.copyButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.2);
+}
+
+.krogerButton {
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.krogerButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.krogerPlaceholder {
+  text-align: center;
+  padding: 40px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.cancelButton {
+  background: transparent;
+  border: 1px solid #6366f1;
+  border-radius: 8px;
+  color: #6366f1;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 16px;
+}
+
+.cancelButton:hover {
+  background: rgba(99, 102, 241, 0.1);
 }
 
 .groceryNote {

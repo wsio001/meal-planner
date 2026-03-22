@@ -9,7 +9,7 @@ import {
 import { C } from '../../constants';
 import styles from './KrogerAuth.module.css';
 
-export function KrogerAuth() {
+export function KrogerAuth({ onSuccess, onCancel }) {
   const [authStatus, setAuthStatus] = useState('checking'); // 'checking' | 'authenticated' | 'unauthenticated'
   const [userInfo, setUserInfo] = useState(null);
   const [storeInfo, setStoreInfo] = useState(null);
@@ -18,6 +18,13 @@ export function KrogerAuth() {
   useEffect(() => {
     checkAuthStatus();
   }, []);
+
+  useEffect(() => {
+    // If already authenticated when component mounts, notify parent
+    if (authStatus === 'authenticated' && onSuccess) {
+      onSuccess();
+    }
+  }, [authStatus, onSuccess]);
 
   async function checkAuthStatus() {
     setAuthStatus('checking');
@@ -73,11 +80,11 @@ export function KrogerAuth() {
     return (
       <div className={styles.container}>
         <div className={styles.card}>
-          <div className={styles.icon}>🛒</div>
-          <h2 className={styles.title}>Connect to Kroger</h2>
+          <div className={styles.icon}>🏪</div>
+          <h2 className={styles.title}>Connect your Ralph's account</h2>
           <p className={styles.description}>
-            Connect your Kroger/Ralph's account to enable automatic product matching,
-            coupon clipping, and cart pre-filling.
+            Sign in once — stays connected so you never have to log in again.
+            Your password goes directly to Kroger's login page — this app never sees it.
           </p>
 
           {error && (
@@ -92,15 +99,14 @@ export function KrogerAuth() {
             className={styles.connectButton}
             style={{ background: C.accent }}
           >
-            Connect Kroger Account
+            Sign in with Ralph's
           </button>
 
-          <div className={styles.features}>
-            <div className={styles.feature}>✓ Auto product matching</div>
-            <div className={styles.feature}>✓ Digital coupon clipping</div>
-            <div className={styles.feature}>✓ Kroger Plus savings</div>
-            <div className={styles.feature}>✓ Pre-filled shopping cart</div>
-          </div>
+          {onCancel && (
+            <button onClick={onCancel} className={styles.cancelLink}>
+              Cancel
+            </button>
+          )}
         </div>
       </div>
     );

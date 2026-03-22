@@ -4,10 +4,10 @@
  * API Documentation: https://developer.kroger.com/reference
  */
 
-// Use CORS proxy for local development only
+// Use Vite proxy for local development, direct API for production
 const isDevelopment = window.location.hostname === 'localhost';
 const KROGER_API_BASE = isDevelopment
-  ? 'https://api.allorigins.win/raw?url=https://api.kroger.com/v1'
+  ? '/api/kroger'  // Vite dev server proxy
   : 'https://api.kroger.com/v1';
 
 // Helper to get correct redirect URI based on environment

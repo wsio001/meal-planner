@@ -5,4 +5,14 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   base: '/meal-planner/',
+  server: {
+    proxy: {
+      '/api/kroger': {
+        target: 'https://api.kroger.com/v1',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/kroger/, ''),
+        secure: true,
+      }
+    }
+  }
 });
