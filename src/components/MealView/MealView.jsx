@@ -3,19 +3,19 @@ import { C } from '../../constants';
 import { SectionHeader } from '../ui';
 import { RecipeCard } from '../RecipeCard/RecipeCard';
 import { useToast } from '../Toast/ToastContainer';
-import { isAuthenticated } from '../../kroger';
-import { KrogerAuth } from '../KrogerAuth/KrogerAuth';
 import styles from './MealView.module.css';
 
 export const MealView = React.memo(function MealView({ mealData, onBack, backLabel }) {
   const [tab, setTab] = useState('overview');
-  const [krogerView, setKrogerView] = useState(null); // null | 'auth' | 'matcher' | 'coupons' | 'summary'
   const { showToast } = useToast();
   const wR = useMemo(() => mealData.recipes.filter(r => !r.isBatchCook), [mealData.recipes]);
   const bR = useMemo(() => mealData.recipes.filter(r =>  r.isBatchCook), [mealData.recipes]);
 
   async function copyNotes() {
-    const text = Object.entries(mealData.iphoneNotes||{}).filter(([,v])=>v.length).map(([,v])=>v.join('\n')).join('\n\n');
+    const text = Object.entries(mealData.iphoneNotes||{})
+      .filter(([,v])=>v.length)
+      .map(([,v])=>v.filter(item => item !== 'Item').join('\n')) // Filter out "Item" header
+      .join('\n\n');
     try {
       await navigator.clipboard.writeText(text);
       showToast('Copied to clipboard!', 'success');
@@ -23,22 +23,6 @@ export const MealView = React.memo(function MealView({ mealData, onBack, backLab
       console.error('Clipboard write failed:', e);
       showToast('Failed to copy to clipboard', 'error');
     }
-  }
-
-  function handleAddToCart() {
-    if (isAuthenticated()) {
-      setKrogerView('matcher');
-    } else {
-      setKrogerView('auth');
-    }
-  }
-
-  function handleKrogerAuthSuccess() {
-    setKrogerView('matcher');
-  }
-
-  function handleKrogerCancel() {
-    setKrogerView(null);
   }
 
   const cssVars = {
@@ -107,17 +91,12 @@ export const MealView = React.memo(function MealView({ mealData, onBack, backLab
           )}
           {tab==='grocery' && (
             <div>
-              {krogerView === null ? (
-                <>
-                  <div className={styles.groceryHeader}>
-                    <h2 className={styles.groceryTitle}>Combined Grocery List</h2>
-                    <div className={styles.groceryButtons}>
-                      <button onClick={copyNotes} className={styles.copyButton} style={cssVars}>📋 Copy for Notes</button>
-                      <button onClick={handleAddToCart} className={styles.krogerButton} style={cssVars}>🛒 Add to Ralph's Cart</button>
-                    </div>
-                  </div>
-                  {bR.length>0 && <div className={styles.groceryNote}>🍲 Batch cook ingredients are included in this list.</div>}
-                  <div className={styles.tableWrapper}>
+              <div className={styles.groceryHeader}>
+                <h2 className={styles.groceryTitle}>Combined Grocery List</h2>
+                <button onClick={copyNotes} className={styles.copyButton} style={cssVars}>📋 Copy Grocery</button>
+              </div>
+              {bR.length>0 && <div className={styles.groceryNote}>🍲 Batch cook ingredients are included in this list.</div>}
+              <div className={styles.tableWrapper}>
                 <table className={styles.table}>
                   <thead><tr className={styles.tableHeader}>{['Type','Item','Quantity','Recipe'].map(h=><th key={h} className={styles.tableHeaderCell}>{h}</th>)}</tr></thead>
                   <tbody>
@@ -132,18 +111,6 @@ export const MealView = React.memo(function MealView({ mealData, onBack, backLab
                   </tbody>
                 </table>
               </div>
-                </>
-              ) : krogerView === 'auth' ? (
-                <KrogerAuth
-                  onSuccess={handleKrogerAuthSuccess}
-                  onCancel={handleKrogerCancel}
-                />
-              ) : krogerView === 'matcher' ? (
-                <div className={styles.krogerPlaceholder}>
-                  <p>Product Matcher coming soon...</p>
-                  <button onClick={handleKrogerCancel} className={styles.cancelButton}>← Back to Grocery List</button>
-                </div>
-              ) : null}
             </div>
           )}
           {tab==='recipes' && (

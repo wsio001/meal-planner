@@ -11,34 +11,10 @@ import { LoadingModal } from './components/LoadingModal/LoadingModal';
 import { SessionBanner } from './components/SessionBanner/SessionBanner';
 import { SettingsProvider, useSettings } from './contexts/SettingsContext';
 import { ToastProvider, useToast } from './components/Toast/ToastContainer';
-import { handleOAuthCallback } from './kroger';
 import { STORAGE_KEYS, UI_CONFIG, API_CONFIG } from './config';
 
 function MealPlanner() {
   const { showToast } = useToast();
-
-  // Handle OAuth callback on mount
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    const state = params.get('state');
-
-    if (code && state) {
-      // OAuth callback detected
-      handleOAuthCallback(code, state)
-        .then(() => {
-          showToast('Successfully connected to Kroger!', 'success');
-          // Clean up URL
-          window.history.replaceState({}, document.title, window.location.pathname);
-        })
-        .catch((error) => {
-          console.error('OAuth callback error:', error);
-          showToast('Failed to connect to Kroger', 'error');
-          // Clean up URL even on error
-          window.history.replaceState({}, document.title, window.location.pathname);
-        });
-    }
-  }, [showToast]);
 
   // Use settings from context
   const {
