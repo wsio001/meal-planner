@@ -9,4 +9,4 @@
  */
 
 // Re-export everything from the new modular structure for backward compatibility
-export * from './data';
+export * from './data/index.js';
