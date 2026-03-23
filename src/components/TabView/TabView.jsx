@@ -4,6 +4,7 @@ import { ThisWeekTab } from '../ThisWeekTab/ThisWeekTab';
 import { HistoryTab } from '../History/History';
 import { PromptView } from '../PromptView/PromptView';
 import { RecreateRecipesView } from '../RecreateRecipesView/RecreateRecipesView';
+import { useRecipeHistory } from '../../contexts/RecipeHistoryContext';
 import styles from './TabView.module.css';
 
 export function TabView({
@@ -14,10 +15,6 @@ export function TabView({
   customRules,
   batchCookEnabled,
   numBatchCook,
-  selectedBatch,
-  setSelectedBatch,
-  selectedWeekly,
-  setSelectedWeekly,
   apiKey,
   // Props for generation
   onGenerate,
@@ -30,6 +27,8 @@ export function TabView({
   currentTab,
   onTabChange
 }) {
+  // Use recipe history from context
+  const { selectedWeekly } = useRecipeHistory();
   const page = currentTab || 'thisweek';
 
   const handlePageChange = (newPage) => {
@@ -103,11 +102,7 @@ export function TabView({
             customRules={customRules}
             batchCookEnabled={batchCookEnabled}
             numBatchCook={numBatchCook}
-            selectedBatch={selectedBatch}
-            setSelectedBatch={setSelectedBatch}
             onViewMealPlan={handleViewMealPlan}
-            selectedWeekly={selectedWeekly}
-            setSelectedWeekly={setSelectedWeekly}
             apiKey={apiKey}
           />
         </>

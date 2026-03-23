@@ -10,8 +10,9 @@ import { APIMissingView } from './components/APIMissingView/APIMissingView';
 import { LoadingModal } from './components/LoadingModal/LoadingModal';
 import { SessionBanner } from './components/SessionBanner/SessionBanner';
 import { SettingsProvider, useSettings } from './contexts/SettingsContext';
+import { RecipeHistoryProvider, useRecipeHistory } from './contexts/RecipeHistoryContext';
 import { ToastProvider, useToast } from './components/Toast/ToastContainer';
-import { STORAGE_KEYS, UI_CONFIG, API_CONFIG } from './config';
+import { STORAGE_KEYS, UI_CONFIG, API_CONFIG, SIZE_CONFIG } from './config';
 
 function MealPlanner() {
   const { showToast } = useToast();
@@ -30,6 +31,14 @@ function MealPlanner() {
     storageMode
   } = useSettings();
 
+  // Use recipe history from context
+  const {
+    selectedWeekly,
+    setSelectedWeekly,
+    selectedBatch,
+    setSelectedBatch
+  } = useRecipeHistory();
+
   // Component-specific state (not settings)
   const [loading, setLoading] = useState(false);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
@@ -38,13 +47,11 @@ function MealPlanner() {
   const [mealData, setMealData] = usePersistedState(STORAGE_KEYS.CURRENT_MEAL_PLAN, null, 'v1');
   const [error, setError] = useState('');
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [selectedWeekly, setSelectedWeekly] = useState([]);
-  const [selectedBatch, setSelectedBatch] = useState([]);
   const [currentTab, setCurrentTab] = useState('thisweek');
   const abortRef = useRef(null);
   const elapsed = useElapsed(loading);
 
-  useEffect(() => { if(selectedBatch.length>numBatch) setSelectedBatch(p=>p.slice(0,numBatch)); }, [numBatch]);
+  useEffect(() => { if(selectedBatch.length>numBatch) setSelectedBatch(p=>p.slice(0,numBatch)); }, [numBatch, selectedBatch.length, setSelectedBatch]);
   useEffect(() => () => { if(abortRef.current) abortRef.current.abort(); }, []);
 
   useEffect(() => {
@@ -200,10 +207,15 @@ function MealPlanner() {
         ) : (
           <TabView
             mealData={mealData}
-            selectedBatch={selectedBatch}
-            setSelectedBatch={setSelectedBatch}
-            selectedWeekly={selectedWeekly}
-            setSelectedWeekly={setSelectedWeekly}
+            numDinners={numDinners}
+            numPeople={numPeople}
+            calories={calories}
+            customRules={customRules}
+            isBatchEnabled={isBatchEnabled}
+            batchCookEnabled={isBatchEnabled}
+            numBatchCook={numBatch}
+            apiKey={apiKey}
+            setCustomRules={setCustomRules}
             onGenerate={generate}
             onRecreate={handleRecreate}
             loading={loading}
@@ -219,30 +231,30 @@ function MealPlanner() {
           onClick={scrollToTop}
           style={{
             position: 'fixed',
-            bottom: '30px',
-            right: '30px',
-            width: '50px',
-            height: '50px',
-            borderRadius: '25px',
+            bottom: `${SIZE_CONFIG.SCROLL_TOP_BUTTON.BOTTOM}px`,
+            right: `${SIZE_CONFIG.SCROLL_TOP_BUTTON.RIGHT}px`,
+            width: `${SIZE_CONFIG.SCROLL_TOP_BUTTON.WIDTH}px`,
+            height: `${SIZE_CONFIG.SCROLL_TOP_BUTTON.HEIGHT}px`,
+            borderRadius: `${SIZE_CONFIG.SCROLL_TOP_BUTTON.BORDER_RADIUS}px`,
             border: 'none',
             background: C.accent,
             color: '#fff',
-            fontSize: '24px',
+            fontSize: `${SIZE_CONFIG.SCROLL_TOP_BUTTON.FONT_SIZE}px`,
             cursor: 'pointer',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            boxShadow: SIZE_CONFIG.SCROLL_TOP_BUTTON.SHADOW_DEFAULT,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             transition: 'all 0.3s ease',
-            zIndex: 1000
+            zIndex: SIZE_CONFIG.SCROLL_TOP_BUTTON.Z_INDEX
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'scale(1.1)';
-            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.2)';
+            e.currentTarget.style.transform = `scale(${SIZE_CONFIG.SCROLL_TOP_BUTTON.SCALE_HOVER})`;
+            e.currentTarget.style.boxShadow = SIZE_CONFIG.SCROLL_TOP_BUTTON.SHADOW_HOVER;
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'scale(1)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            e.currentTarget.style.boxShadow = SIZE_CONFIG.SCROLL_TOP_BUTTON.SHADOW_DEFAULT;
           }}
         >
           ↑
@@ -266,7 +278,9 @@ export default function App() {
     <ErrorBoundary>
       <ToastProvider>
         <SettingsProvider>
-          <MealPlanner />
+          <RecipeHistoryProvider>
+            <MealPlanner />
+          </RecipeHistoryProvider>
         </SettingsProvider>
       </ToastProvider>
     </ErrorBoundary>

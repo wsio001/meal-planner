@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { DEFAULTS, STORAGE_KEYS } from '../config';
 import { RULES_KEY, DEFAULT_RULES } from '../constants';
+import { obfuscate, deobfuscate, isObfuscated } from '../utils/encryption';
 
 const SettingsContext = createContext(null);
 
@@ -28,10 +29,19 @@ export function SettingsProvider({ children }) {
     };
   });
 
-  // Initialize API key separately
+  // Initialize API key separately (with decryption)
   const [apiKey, setApiKeyState] = useState(() => {
     try {
-      return localStorage.getItem(STORAGE_KEYS.SETTINGS_API_KEY) || '';
+      const stored = localStorage.getItem(STORAGE_KEYS.SETTINGS_API_KEY);
+      if (!stored) return '';
+
+      // Check if the stored key is already obfuscated
+      if (isObfuscated(stored)) {
+        return deobfuscate(stored);
+      }
+
+      // If it's plain text (legacy), return as-is and it will be encrypted on next save
+      return stored;
     } catch (error) {
       console.warn('Failed to load API key from localStorage:', error);
       return '';
@@ -75,10 +85,13 @@ export function SettingsProvider({ children }) {
     }
   }, []);
 
-  // Save API key
+  // Save API key (with encryption)
   const setApiKey = useCallback(async (newApiKey) => {
     try {
-      localStorage.setItem(STORAGE_KEYS.SETTINGS_API_KEY, newApiKey);
+      // Obfuscate the API key before storing
+      const obfuscatedKey = newApiKey ? obfuscate(newApiKey) : '';
+      localStorage.setItem(STORAGE_KEYS.SETTINGS_API_KEY, obfuscatedKey);
+      // Store plain text in state for use
       setApiKeyState(newApiKey);
     } catch (error) {
       if (error.name === 'QuotaExceededError') {

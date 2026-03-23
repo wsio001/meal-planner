@@ -55,4 +55,17 @@ export const SIZE_CONFIG = {
   MIN_PANEL_HEIGHT: 400,
   CHIP_MIN_HEIGHT: 38,
   INPUT_MIN_HEIGHT: 45,
+  SCROLL_TOP_BUTTON: {
+    WIDTH: 50,
+    HEIGHT: 50,
+    BOTTOM: 30,
+    RIGHT: 30,
+    BORDER_RADIUS: 25,
+    FONT_SIZE: 24,
+    Z_INDEX: 1000,
+    SHADOW_DEFAULT: '0 4px 12px rgba(0,0,0,0.15)',
+    SHADOW_HOVER: '0 6px 16px rgba(0,0,0,0.2)',
+    SCALE_HOVER: 1.1,
+  },
+  EMPTY_STATE_EMOJI_SIZE: 40,
 };

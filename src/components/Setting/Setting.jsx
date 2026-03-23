@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { C } from '../../constants';
-import { PickerRow, CalorieInput } from '../ui';
-import { SETTINGS_CONFIG } from '../../config';
 import { useSettings } from '../../contexts/SettingsContext';
 import { SaveStateOverlay } from '../SaveStateOverlay/SaveStateOverlay';
+import { ApiKeySection } from './ApiKeySection';
+import { SettingsForm } from './SettingsForm';
+import { BatchCookToggle } from './BatchCookToggle';
 import styles from './Setting.module.css';
 
 export function Setting({ selectedBatch, onClose, onGoToHistory }) {
@@ -17,8 +18,7 @@ export function Setting({ selectedBatch, onClose, onGoToHistory }) {
     batchServings,
     apiKey,
     saveSettings,
-    setApiKey,
-    storageMode
+    setApiKey
   } = useSettings();
 
   // Local state for settings (not saved until Save button is clicked)
@@ -29,12 +29,7 @@ export function Setting({ selectedBatch, onClose, onGoToHistory }) {
   const [localNumBatch, setLocalNumBatch] = useState(numBatch);
   const [localBatchServings, setLocalBatchServings] = useState(batchServings);
   const [localApiKey, setLocalApiKey] = useState(apiKey);
-
-  // API Key validation state
-  const [apiKeyValidation, setApiKeyValidation] = useState({
-    status: 'idle', // 'idle' | 'checking' | 'valid' | 'invalid'
-    message: ''
-  });
+  const [apiKeyValidationStatus, setApiKeyValidationStatus] = useState('idle');
 
   // Save state overlay
   const [saveState, setSaveState] = useState(null); // null | 'saving' | 'success' | 'warning' | 'error'
@@ -52,33 +47,10 @@ export function Setting({ selectedBatch, onClose, onGoToHistory }) {
     setLocalApiKey(apiKey);
   }, [numDinners, numPeople, calories, isBatchEnabled, numBatch, batchServings, apiKey]);
 
-  // Validate API key with debounce
-  useEffect(() => {
-    if (!localApiKey || !localApiKey.trim()) {
-      setApiKeyValidation({ status: 'idle', message: '' });
-      return;
-    }
-
-    setApiKeyValidation({ status: 'checking', message: '' });
-
-    const timer = setTimeout(() => {
-      if (!localApiKey.startsWith('sk-ant-')) {
-        setApiKeyValidation({
-          status: 'invalid',
-          message: 'Please enter a valid API key'
-        });
-      } else if (localApiKey.length < 40) {
-        setApiKeyValidation({
-          status: 'invalid',
-          message: 'API key is too short'
-        });
-      } else {
-        setApiKeyValidation({ status: 'valid', message: '' });
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [localApiKey]);
+  const handleApiKeyChange = useCallback((newKey, validationStatus) => {
+    setLocalApiKey(newKey);
+    setApiKeyValidationStatus(validationStatus);
+  }, []);
 
   const handleSave = async () => {
     setSaveState('saving');
@@ -159,27 +131,19 @@ export function Setting({ selectedBatch, onClose, onGoToHistory }) {
     }
   };
 
-  const toggleContainerClass = `${styles.toggleContainer} ${localIsBatchEnabled ? styles.on : styles.off}`;
-  const toggleLabelClass = `${styles.toggleLabel} ${localIsBatchEnabled ? styles.on : styles.off}`;
-  const toggleStatusClass = `${styles.toggleStatus} ${localIsBatchEnabled ? styles.on : styles.off}`;
-  const toggleTrackClass = `${styles.toggleTrack} ${localIsBatchEnabled ? styles.on : styles.off}`;
-  const toggleThumbClass = `${styles.toggleThumb} ${localIsBatchEnabled ? styles.on : styles.off}`;
-
   const cssVars = useMemo(() => ({
     '--teal-color': C.teal,
     '--teal-text': C.tealText,
     '--teal-dark': C.tealDark,
     '--muted-color': C.muted,
     '--dimmer-color': C.dimmer,
-    '--accent-color': C.accent,
-    '--valid-color': C.success,
-    '--invalid-color': '#fca5a5'
+    '--accent-color': C.accent
   }), []);
 
   const isSaveDisabled =
     saveState === 'saving' ||
-    apiKeyValidation.status === 'invalid' ||
-    apiKeyValidation.status === 'checking';
+    apiKeyValidationStatus === 'invalid' ||
+    apiKeyValidationStatus === 'checking';
 
   return (
     <div className={styles.settingsPanel}>
@@ -197,80 +161,29 @@ export function Setting({ selectedBatch, onClose, onGoToHistory }) {
         )}
       </div>
 
-      {/* API Key Section */}
-      <div className={styles.apiKeySection}>
-        {/* Security Warning */}
-        <div className={styles.securityNotice}>
-          <div className={styles.noticeHeader}>
-            <span className={styles.noticeIcon}>🔒</span>
-            <strong>Security Notice</strong>
-          </div>
-          <ul className={styles.noticeList}>
-            <li>Only enter your API key on <strong>{window.location.hostname}</strong></li>
-            <li>Never share your API key with anyone</li>
-            <li>Your key is stored locally in your browser only</li>
-          </ul>
-        </div>
+      <ApiKeySection
+        apiKey={localApiKey}
+        onApiKeyChange={handleApiKeyChange}
+      />
 
-        <label className={styles.apiKeyLabel}>🔑 Anthropic API Key</label>
-        <input
-          type="password"
-          value={localApiKey}
-          onChange={(e) => setLocalApiKey(e.target.value)}
-          placeholder="sk-ant-..."
-          className={styles.apiKeyInput}
-        />
-        {apiKeyValidation.status === 'checking' && (
-          <p className={styles.apiKeyValidating} style={cssVars}>
-            ⏳ Checking...
-          </p>
-        )}
-        {apiKeyValidation.status === 'valid' && (
-          <p className={styles.apiKeyValid} style={cssVars}>
-            ✓ Valid API key
-          </p>
-        )}
-        {apiKeyValidation.status === 'invalid' && (
-          <p className={styles.apiKeyInvalid} style={cssVars}>
-            ✗ {apiKeyValidation.message}
-          </p>
-        )}
-        {apiKeyValidation.status === 'idle' && (
-          <p className={styles.apiKeyHint}>
-            Your API key is stored locally and never sent to any server except Anthropic's API.
-          </p>
-        )}
-      </div>
+      <SettingsForm
+        numDinners={localNumDinners}
+        numPeople={localNumPeople}
+        calories={localCalories}
+        onNumDinnersChange={setLocalNumDinners}
+        onNumPeopleChange={setLocalNumPeople}
+        onCaloriesChange={setLocalCalories}
+      />
 
-      <div className={styles.settingsRow}>
-        <PickerRow label="🍽️ Dinners / week" value={localNumDinners} setValue={setLocalNumDinners} options={SETTINGS_CONFIG.DINNERS_OPTIONS} />
-        <PickerRow label="👥 People / dinner" value={localNumPeople} setValue={setLocalNumPeople} options={SETTINGS_CONFIG.PEOPLE_OPTIONS} />
-        <CalorieInput calories={localCalories} setCalories={setLocalCalories} />
-      </div>
-      <div className={styles.settingsDivider}>
-        <div className={styles.batchSettings}>
-          <div onClick={() => setLocalIsBatchEnabled(v => !v)} className={toggleContainerClass} style={cssVars}>
-            <div>
-              <span className={toggleLabelClass}>🍲 Batch Cook</span>
-              <span className={toggleStatusClass}>
-                {localIsBatchEnabled ? 'Enabled' : 'Off — click to enable'}
-              </span>
-              {localIsBatchEnabled && selectedBatch.length > 0 && (
-                <span className={styles.toggleBadge}>{selectedBatch.length + ' from history'}</span>
-              )}
-            </div>
-            <div className={toggleTrackClass}>
-              <div className={toggleThumbClass} />
-            </div>
-          </div>
-          {localIsBatchEnabled && (
-            <div className={styles.settingsRow}>
-              <PickerRow label="🍲 Batch recipes" value={localNumBatch} setValue={setLocalNumBatch} options={SETTINGS_CONFIG.BATCH_RECIPES_OPTIONS} ac={C.teal} bg={C.tealBg} tc={C.tealText} />
-              <PickerRow label="🥣 Batch servings" value={localBatchServings} setValue={setLocalBatchServings} options={SETTINGS_CONFIG.BATCH_SERVINGS_OPTIONS} ac={C.teal} bg={C.tealBg} tc={C.tealText} />
-            </div>
-          )}
-        </div>
-      </div>
+      <BatchCookToggle
+        enabled={localIsBatchEnabled}
+        numBatch={localNumBatch}
+        batchServings={localBatchServings}
+        selectedBatchCount={selectedBatch.length}
+        onToggle={() => setLocalIsBatchEnabled(v => !v)}
+        onNumBatchChange={setLocalNumBatch}
+        onBatchServingsChange={setLocalBatchServings}
+      />
 
       {/* Save State Overlay */}
       <SaveStateOverlay
