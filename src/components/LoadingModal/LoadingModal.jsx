@@ -9,7 +9,8 @@ export function LoadingModal({
   stage,
   elapsed,
   progress,
-  numDinners,
+  workflowProgress,
+  numRecipes,
   onComplete
 }) {
   const [showSuccess, setShowSuccess] = useState(false);
@@ -21,8 +22,9 @@ export function LoadingModal({
     '--success-color': C.success
   }), []);
 
-  // Check if all recipes are done
-  const allDone = progress && progress.length > 0 && progress.every(p => p === true);
+  // Check if all recipes and workflow are done
+  const allRecipesDone = progress && progress.length > 0 && progress.every(p => p === true);
+  const allDone = allRecipesDone && workflowProgress;
 
   // Trigger success animation when all done (only once per session)
   useEffect(() => {
@@ -67,20 +69,29 @@ export function LoadingModal({
         </div>
 
         {progress && progress.length > 0 && (
-          <div className={styles.progressGrid}>
-            {progress.map((done, i) => {
-              const isBatch = i >= numDinners;
-              const itemClass = `${styles.progressItem} ${
-                done ? (isBatch ? styles.doneBatch : styles.done) : styles.pending
-              }`;
-              return (
-                <div key={i} className={itemClass}>
-                  {done ? '✓' : '⏳'}{' '}
-                  {isBatch ? 'Batch ' + (i - numDinners + 1) : 'Recipe ' + (i + 1)}
-                </div>
-              );
-            })}
-          </div>
+          <>
+            <div className={styles.progressGrid}>
+              {progress.map((done, i) => {
+                const isBatch = i >= numRecipes;
+                const itemClass = `${styles.progressItem} ${
+                  done ? (isBatch ? styles.doneBatch : styles.done) : styles.pending
+                }`;
+                return (
+                  <div key={i} className={itemClass}>
+                    {done ? '✓' : '⏳'}{' '}
+                    {isBatch ? 'Batch ' + (i - numRecipes + 1) : 'Recipe ' + (i + 1)}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Workflow Progress - Full Width Below Recipes */}
+            <div className={`${styles.workflowProgressItem} ${
+              workflowProgress ? styles.workflowDone : styles.workflowPending
+            }`}>
+              {workflowProgress ? '✓' : '⏳'} Concurrent Workflow
+            </div>
+          </>
         )}
       </div>
     </Modal>

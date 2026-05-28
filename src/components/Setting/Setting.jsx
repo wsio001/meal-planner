@@ -1,35 +1,52 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { C } from '../../constants';
 import { useSettings } from '../../contexts/SettingsContext';
 import { SaveStateOverlay } from '../SaveStateOverlay/SaveStateOverlay';
 import { ApiKeySection } from './ApiKeySection';
 import { SettingsForm } from './SettingsForm';
 import { BatchCookToggle } from './BatchCookToggle';
+import { EquipmentSettings } from './EquipmentSettings';
 import styles from './Setting.module.css';
 
 export function Setting({ selectedBatch, onClose, onGoToHistory }) {
   // Get settings from context
   const {
-    numDinners,
+    numRecipes,
+    mealsPerWeek,
     numPeople,
     calories,
     isBatchEnabled,
     numBatch,
     batchServings,
+    stovetopBurners,
+    hasOven,
+    hasAirFryer,
+    hasPressureCooker,
+    hasSousVide,
     apiKey,
     saveSettings,
     setApiKey
   } = useSettings();
 
   // Local state for settings (not saved until Save button is clicked)
-  const [localNumDinners, setLocalNumDinners] = useState(numDinners);
+  const [localNumRecipes, setLocalNumRecipes] = useState(numRecipes);
+  const [localMealsPerWeek, setLocalMealsPerWeek] = useState(mealsPerWeek);
   const [localNumPeople, setLocalNumPeople] = useState(numPeople);
   const [localCalories, setLocalCalories] = useState(calories);
   const [localIsBatchEnabled, setLocalIsBatchEnabled] = useState(isBatchEnabled);
   const [localNumBatch, setLocalNumBatch] = useState(numBatch);
   const [localBatchServings, setLocalBatchServings] = useState(batchServings);
+  const [localStoretopBurners, setLocalStoretopBurners] = useState(stovetopBurners);
+  const [localHasOven, setLocalHasOven] = useState(hasOven);
+  const [localHasAirFryer, setLocalHasAirFryer] = useState(hasAirFryer);
+  const [localHasPressureCooker, setLocalHasPressureCooker] = useState(hasPressureCooker);
+  const [localHasSousVide, setLocalHasSousVide] = useState(hasSousVide);
   const [localApiKey, setLocalApiKey] = useState(apiKey);
   const [apiKeyValidationStatus, setApiKeyValidationStatus] = useState('idle');
+
+  // Computed values
+  const localTotalServings = localMealsPerWeek * localNumPeople;
+  const localServingsPerRecipe = Math.ceil(localTotalServings / localNumRecipes);
 
   // Save state overlay
   const [saveState, setSaveState] = useState(null); // null | 'saving' | 'success' | 'warning' | 'error'
@@ -38,14 +55,20 @@ export function Setting({ selectedBatch, onClose, onGoToHistory }) {
 
   // Sync local state when context values change (e.g., when reopening Settings)
   useEffect(() => {
-    setLocalNumDinners(numDinners);
+    setLocalNumRecipes(numRecipes);
+    setLocalMealsPerWeek(mealsPerWeek);
     setLocalNumPeople(numPeople);
     setLocalCalories(calories);
     setLocalIsBatchEnabled(isBatchEnabled);
     setLocalNumBatch(numBatch);
     setLocalBatchServings(batchServings);
+    setLocalStoretopBurners(stovetopBurners);
+    setLocalHasOven(hasOven);
+    setLocalHasAirFryer(hasAirFryer);
+    setLocalHasPressureCooker(hasPressureCooker);
+    setLocalHasSousVide(hasSousVide);
     setLocalApiKey(apiKey);
-  }, [numDinners, numPeople, calories, isBatchEnabled, numBatch, batchServings, apiKey]);
+  }, [numRecipes, mealsPerWeek, numPeople, calories, isBatchEnabled, numBatch, batchServings, stovetopBurners, hasOven, hasAirFryer, hasPressureCooker, hasSousVide, apiKey]);
 
   const handleApiKeyChange = useCallback((newKey, validationStatus) => {
     setLocalApiKey(newKey);
@@ -65,12 +88,18 @@ export function Setting({ selectedBatch, onClose, onGoToHistory }) {
 
       // Save settings - returns { success, mode }
       const result = await saveSettings({
-        numDinners: localNumDinners,
+        numRecipes: localNumRecipes,
+        mealsPerWeek: localMealsPerWeek,
         numPeople: localNumPeople,
         calories: localCalories,
         isBatchEnabled: localIsBatchEnabled,
         numBatch: localNumBatch,
-        batchServings: localBatchServings
+        batchServings: localBatchServings,
+        stovetopBurners: localStoretopBurners,
+        hasOven: localHasOven,
+        hasAirFryer: localHasAirFryer,
+        hasPressureCooker: localHasPressureCooker,
+        hasSousVide: localHasSousVide
       });
 
       // Check if we're in session-only mode immediately from the result
@@ -142,8 +171,8 @@ export function Setting({ selectedBatch, onClose, onGoToHistory }) {
 
   const isSaveDisabled =
     saveState === 'saving' ||
-    apiKeyValidationStatus === 'invalid' ||
-    apiKeyValidationStatus === 'checking';
+    apiKeyValidationStatus === 'checking' ||
+    (localApiKey && apiKeyValidationStatus === 'invalid');
 
   return (
     <div className={styles.settingsPanel}>
@@ -167,10 +196,14 @@ export function Setting({ selectedBatch, onClose, onGoToHistory }) {
       />
 
       <SettingsForm
-        numDinners={localNumDinners}
+        numRecipes={localNumRecipes}
+        mealsPerWeek={localMealsPerWeek}
         numPeople={localNumPeople}
         calories={localCalories}
-        onNumDinnersChange={setLocalNumDinners}
+        totalServings={localTotalServings}
+        servingsPerRecipe={localServingsPerRecipe}
+        onNumRecipesChange={setLocalNumRecipes}
+        onMealsPerWeekChange={setLocalMealsPerWeek}
         onNumPeopleChange={setLocalNumPeople}
         onCaloriesChange={setLocalCalories}
       />
@@ -183,6 +216,19 @@ export function Setting({ selectedBatch, onClose, onGoToHistory }) {
         onToggle={() => setLocalIsBatchEnabled(v => !v)}
         onNumBatchChange={setLocalNumBatch}
         onBatchServingsChange={setLocalBatchServings}
+      />
+
+      <EquipmentSettings
+        stovetopBurners={localStoretopBurners}
+        hasOven={localHasOven}
+        hasAirFryer={localHasAirFryer}
+        hasPressureCooker={localHasPressureCooker}
+        hasSousVide={localHasSousVide}
+        onStoretopBurnersChange={setLocalStoretopBurners}
+        onHasOvenChange={setLocalHasOven}
+        onHasAirFryerChange={setLocalHasAirFryer}
+        onHasPressureCookerChange={setLocalHasPressureCooker}
+        onHasSousVideChange={setLocalHasSousVide}
       />
 
       {/* Save State Overlay */}

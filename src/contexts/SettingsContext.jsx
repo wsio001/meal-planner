@@ -13,19 +13,53 @@ export function SettingsProvider({ children }) {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.SETTINGS_PREFS);
       if (stored) {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        // Backward compatibility: migrate from old numDinners to new structure
+        if (parsed.numDinners !== undefined && parsed.numRecipes === undefined) {
+          return {
+            numRecipes: parsed.numDinners || DEFAULTS.NUM_RECIPES,
+            mealsPerWeek: DEFAULTS.MEALS_PER_WEEK,
+            numPeople: parsed.numPeople || DEFAULTS.NUM_PEOPLE,
+            calories: parsed.calories || DEFAULTS.CALORIES,
+            isBatchEnabled: parsed.isBatchEnabled ?? DEFAULTS.IS_BATCH_ENABLED,
+            numBatch: parsed.numBatch || DEFAULTS.NUM_BATCH,
+            batchServings: parsed.batchServings || DEFAULTS.BATCH_SERVINGS,
+            // Add default equipment
+            stovetopBurners: DEFAULTS.STOVETOP_BURNERS,
+            hasOven: DEFAULTS.HAS_OVEN,
+            hasAirFryer: DEFAULTS.HAS_AIR_FRYER,
+            hasPressureCooker: DEFAULTS.HAS_PRESSURE_COOKER,
+            hasSousVide: DEFAULTS.HAS_SOUS_VIDE,
+          };
+        }
+        // Ensure equipment fields exist even in newer data
+        return {
+          ...parsed,
+          stovetopBurners: parsed.stovetopBurners ?? DEFAULTS.STOVETOP_BURNERS,
+          hasOven: parsed.hasOven ?? DEFAULTS.HAS_OVEN,
+          hasAirFryer: parsed.hasAirFryer ?? DEFAULTS.HAS_AIR_FRYER,
+          hasPressureCooker: parsed.hasPressureCooker ?? DEFAULTS.HAS_PRESSURE_COOKER,
+          hasSousVide: parsed.hasSousVide ?? DEFAULTS.HAS_SOUS_VIDE,
+        };
       }
     } catch (error) {
       console.warn('Failed to load settings from localStorage:', error);
       setStorageMode('session-only');
     }
     return {
-      numDinners: DEFAULTS.NUM_DINNERS,
+      numRecipes: DEFAULTS.NUM_RECIPES,
+      mealsPerWeek: DEFAULTS.MEALS_PER_WEEK,
       numPeople: DEFAULTS.NUM_PEOPLE,
       calories: DEFAULTS.CALORIES,
       isBatchEnabled: DEFAULTS.IS_BATCH_ENABLED,
       numBatch: DEFAULTS.NUM_BATCH,
       batchServings: DEFAULTS.BATCH_SERVINGS,
+      // Equipment
+      stovetopBurners: DEFAULTS.STOVETOP_BURNERS,
+      hasOven: DEFAULTS.HAS_OVEN,
+      hasAirFryer: DEFAULTS.HAS_AIR_FRYER,
+      hasPressureCooker: DEFAULTS.HAS_PRESSURE_COOKER,
+      hasSousVide: DEFAULTS.HAS_SOUS_VIDE,
     };
   });
 
@@ -123,8 +157,12 @@ export function SettingsProvider({ children }) {
   }, []);
 
   // Individual setters for convenience
-  const setNumDinners = useCallback((value) => {
-    setSettings(prev => ({ ...prev, numDinners: value }));
+  const setNumRecipes = useCallback((value) => {
+    setSettings(prev => ({ ...prev, numRecipes: value }));
+  }, []);
+
+  const setMealsPerWeek = useCallback((value) => {
+    setSettings(prev => ({ ...prev, mealsPerWeek: value }));
   }, []);
 
   const setNumPeople = useCallback((value) => {
@@ -150,6 +188,26 @@ export function SettingsProvider({ children }) {
     setSettings(prev => ({ ...prev, batchServings: value }));
   }, []);
 
+  const setStoretopBurners = useCallback((value) => {
+    setSettings(prev => ({ ...prev, stovetopBurners: value }));
+  }, []);
+
+  const setHasOven = useCallback((value) => {
+    setSettings(prev => ({ ...prev, hasOven: value }));
+  }, []);
+
+  const setHasAirFryer = useCallback((value) => {
+    setSettings(prev => ({ ...prev, hasAirFryer: value }));
+  }, []);
+
+  const setHasPressureCooker = useCallback((value) => {
+    setSettings(prev => ({ ...prev, hasPressureCooker: value }));
+  }, []);
+
+  const setHasSousVide = useCallback((value) => {
+    setSettings(prev => ({ ...prev, hasSousVide: value }));
+  }, []);
+
   const value = {
     // Settings
     ...settings,
@@ -157,8 +215,13 @@ export function SettingsProvider({ children }) {
     customRules,
     storageMode,
 
+    // Computed values
+    totalServingsNeeded: settings.mealsPerWeek * settings.numPeople,
+    servingsPerRecipe: Math.ceil((settings.mealsPerWeek * settings.numPeople) / settings.numRecipes),
+
     // Setters
-    setNumDinners,
+    setNumRecipes,
+    setMealsPerWeek,
     setNumPeople,
     setCalories,
     setIsBatchEnabled,
@@ -166,6 +229,13 @@ export function SettingsProvider({ children }) {
     setBatchServings,
     setApiKey,
     setCustomRules,
+
+    // Equipment setters
+    setStoretopBurners,
+    setHasOven,
+    setHasAirFryer,
+    setHasPressureCooker,
+    setHasSousVide,
 
     // Save all settings at once
     saveSettings,

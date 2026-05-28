@@ -2,7 +2,7 @@ import React from 'react';
 import { C } from '../../../constants';
 import styles from './HistoryMealsCounter.module.css';
 
-export const HistoryMealsCounter = React.memo(function HistoryMealsCounter({ selectedCount, numDinners }) {
+export const HistoryMealsCounter = React.memo(function HistoryMealsCounter({ selectedCount, numRecipes }) {
   const cssVars = {
     '--muted-color': C.muted,
     '--text-color': C.text,
@@ -16,7 +16,7 @@ export const HistoryMealsCounter = React.memo(function HistoryMealsCounter({ sel
       <div className={styles.counterDisplay}>
         <span className={styles.counterValue}>{selectedCount}</span>
         <span className={styles.counterSeparator}>/</span>
-        <span className={styles.counterTotal}>{numDinners}</span>
+        <span className={styles.counterTotal}>{numRecipes}</span>
         <span className={styles.counterLabel}>meals selected</span>
       </div>
     </div>

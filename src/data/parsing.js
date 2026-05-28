@@ -52,7 +52,10 @@ export function parseTabFormat(text) {
     if (!l) return;
     const p = l.split('\t');
     if (p.length >= 2) {
-      overview.push([p[0].trim(), p[1].trim()]);
+      // Now includes: RecipeName TAB Cuisine TAB CookingMethod (optional)
+      const cookingMethod = p[2]?.trim() || '';
+      overview.push([p[0].trim(), p[1].trim(), cookingMethod]);
+      console.log('[TAB1 Parse]', p[0].trim(), '→ Method:', cookingMethod);
     }
   });
 
@@ -97,6 +100,7 @@ export function parseTabFormat(text) {
       name: '',
       cuisine: '',
       cookTime: '',
+      cookingMethod: '',
       caloriesPerServing: 0,
       ingredients: [],
       workflow: []
@@ -110,6 +114,11 @@ export function parseTabFormat(text) {
       if (/^recipe name:/i.test(l)) { r.name = l.replace(/^recipe name:\s*/i, ''); return; }
       if (/^cuisine:/i.test(l)) { r.cuisine = l.replace(/^cuisine:\s*/i, ''); return; }
       if (/^cook time:/i.test(l)) { r.cookTime = l.replace(/^cook time:\s*/i, ''); return; }
+      if (/^cooking method:/i.test(l)) {
+        r.cookingMethod = l.replace(/^cooking method:\s*/i, '');
+        console.log('[TAB3 Parse]', r.name || 'Recipe', '→ Method from TAB3:', r.cookingMethod);
+        return;
+      }
       if (/^calories:/i.test(l)) { r.caloriesPerServing = parseInt(l.replace(/^calories:\s*/i, '')) || 0; return; }
       if (/^INGREDIENTS/i.test(l)) { mode = 'ingredients'; return; }
       if (/^OPTIMIZED COOKING/i.test(l)) { mode = 'workflow'; return; }
@@ -123,7 +132,17 @@ export function parseTabFormat(text) {
       }
     });
 
-    if (r.name) recipes.push(r);
+    if (r.name) {
+      // Fallback: If cooking method is missing in TAB3, try to get it from TAB1 (overview)
+      if (!r.cookingMethod && overview[idx]) {
+        r.cookingMethod = overview[idx][2] || '';
+        if (r.cookingMethod) {
+          console.log('[TAB3 Fallback]', r.name, '→ Using TAB1 method:', r.cookingMethod);
+        }
+      }
+      console.log('[Final Recipe]', r.name, '→ Final method:', r.cookingMethod || 'MISSING');
+      recipes.push(r);
+    }
   });
 
   return { overview, grocery, recipes, iphoneNotes: iph };

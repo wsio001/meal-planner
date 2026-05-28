@@ -25,20 +25,44 @@ export const SETTINGS_CONFIG = {
   CALORIE_MIN: 300,
   CALORIE_MAX: 1500,
   CALORIE_PRESETS: [400, 500, 600, 700, 750, 800],
-  DINNERS_OPTIONS: [2, 3, 4, 5, 6, 7],
+  MEALS_PER_WEEK_OPTIONS: [3, 5, 7, 10, 14, 21],
   PEOPLE_OPTIONS: [1, 2, 3, 4, 5, 6],
+  NUM_RECIPES_OPTIONS: [2, 3, 4, 5],
   BATCH_RECIPES_OPTIONS: [1, 2, 3, 4],
   BATCH_SERVINGS_OPTIONS: [8, 10, 12, 15, 20],
+  STOVETOP_BURNERS_OPTIONS: [1, 2, 3, 4, 5, 6],
 };
+
+// Cooking Methods (for recipe variety and concurrent preparation)
+// Stovetop variants help manage burner usage:
+// - Stovetop/Oven: Starts on stovetop, finishes in oven (frees burner)
+// - Stovetop: Active cooking (needs constant attention)
+// - Stovetop/Simmer: Active start, then simmers (low maintenance)
+export const COOKING_METHODS = [
+  'Sous Vide',
+  'Oven',
+  'Stovetop/Oven',
+  'Stovetop',
+  'Stovetop/Simmer',
+  'Air Fryer',
+  'Pressure Cooker'
+];
 
 // Default Values
 export const DEFAULTS = {
-  NUM_DINNERS: 3,
-  NUM_PEOPLE: 2,
+  NUM_RECIPES: 3, // Number of different recipes to generate
+  MEALS_PER_WEEK: 7, // Number of meals needed per week
+  NUM_PEOPLE: 2, // Number of people eating per meal
   CALORIES: 750,
   IS_BATCH_ENABLED: false,
   NUM_BATCH: 2,
   BATCH_SERVINGS: 15,
+  // Equipment Settings
+  STOVETOP_BURNERS: 4,
+  HAS_OVEN: true,
+  HAS_AIR_FRYER: true,
+  HAS_PRESSURE_COOKER: true,
+  HAS_SOUS_VIDE: true,
 };
 
 // Storage Keys

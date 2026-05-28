@@ -6,8 +6,10 @@ import { useRecipeHistory } from '../../contexts/RecipeHistoryContext';
 import styles from './History.module.css';
 
 export function HistoryTab({
-  numDinners,
+  numRecipes,
+  mealsPerWeek,
   numPeople,
+  servingsPerRecipe,
   calories,
   customRules,
   batchCookEnabled,
@@ -62,8 +64,10 @@ export function HistoryTab({
       <div className={styles.tabContent}>
         {sub === 'weekly' && (
           <WeeklyHistorySubTab
-            numDinners={numDinners}
+            numRecipes={numRecipes}
+            mealsPerWeek={mealsPerWeek}
             numPeople={numPeople}
+            servingsPerRecipe={servingsPerRecipe}
             calories={calories}
             customRules={customRules}
             onViewMealPlan={onViewMealPlan}

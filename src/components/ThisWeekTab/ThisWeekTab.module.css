@@ -1,3 +1,51 @@
+/* Tab Container */
+.tabContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Sub-tab Bar */
+.subTabBar {
+  display: flex;
+  background: #0f172a;
+  border-radius: 10px;
+  padding: 4px;
+  border: 1px solid var(--border-color);
+  gap: 4px;
+}
+
+.subTab,
+.subTabActive {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+  color: var(--tab-color);
+}
+
+.subTab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+}
+
+.subTabActive {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+/* Sub-tab Content */
+.subTabContent {
+  /* No additional styling needed - content handles its own layout */
+}
+
+/* Empty State */
 .emptyState {
   text-align: center;
   padding: 60px 20px;

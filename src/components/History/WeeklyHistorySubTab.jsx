@@ -3,13 +3,14 @@ import { C, S } from '../../constants';
 import { loadRecipes } from '../../data';
 import { storage } from '../../storage';
 import { STORAGE_KEYS, SIZE_CONFIG } from '../../config';
+import { wouldConflictWithSelected } from '../../api';
 import { HistoryTable } from './HistoryTable';
 import { HistoryBar } from './HistoryBar';
 import { LoadingSkeleton } from '../ui/LoadingSkeleton/LoadingSkeleton';
 import { useRecipeHistory } from '../../contexts/RecipeHistoryContext';
 import styles from './History.module.css';
 
-export function WeeklyHistorySubTab({ numDinners }) {
+export function WeeklyHistorySubTab({ numRecipes, mealsPerWeek, numPeople, servingsPerRecipe, calories, customRules, onViewMealPlan, apiKey }) {
   // Use recipe history from context
   const { selectedWeekly, setSelectedWeekly } = useRecipeHistory();
   const [all, setAll] = useState([]);
@@ -26,13 +27,25 @@ export function WeeklyHistorySubTab({ numDinners }) {
   const toggleSel = useCallback(r => {
     setSelectedWeekly(prev => {
       const isAlreadySelected = prev.some(x => x.name === r.name);
-      return isAlreadySelected
-        ? prev.filter(x => x.name !== r.name)
-        : prev.length < numDinners
-          ? [...prev, r]
-          : prev;
+
+      if (isAlreadySelected) {
+        // Deselecting - always allowed
+        return prev.filter(x => x.name !== r.name);
+      } else {
+        // Selecting - check conflicts and capacity
+        if (prev.length >= numRecipes) {
+          return prev; // Already at max
+        }
+
+        // Check if this recipe's cooking method conflicts with already selected
+        if (wouldConflictWithSelected(r, prev)) {
+          return prev; // Don't add - would cause conflict
+        }
+
+        return [...prev, r];
+      }
     });
-  }, [numDinners, setSelectedWeekly]);
+  }, [numRecipes, setSelectedWeekly]);
 
   const clearAll = useCallback(async () => {
     try {
@@ -70,13 +83,13 @@ export function WeeklyHistorySubTab({ numDinners }) {
     <div>
       <HistoryBar
         selectedCount={selectedWeekly.length}
-        maxSelect={numDinners}
+        maxSelect={numRecipes}
         onClearSelection={() => setSelectedWeekly([])}
         confirmClear={confirmClear}
         onConfirmClear={clearAll}
         onCancelClear={() => setConfirmClear(false)}
         onDeleteHistory={() => setConfirmClear(true)}
-        labelText={'Select up to ' + numDinners + ' recipes'}
+        labelText={'Select up to ' + numRecipes + ' recipes'}
         isBatch={false}
         cssVars={barStyle}
       />
@@ -104,12 +117,16 @@ export function WeeklyHistorySubTab({ numDinners }) {
         rows={all}
         selected={selectedWeekly}
         onToggle={toggleSel}
-        maxSelect={numDinners}
+        maxSelect={numRecipes}
         acColor={C.accent}
         acBg={C.accentBg}
         acText={C.accentText}
         checkDark={false}
         disabled={false}
+        isRecipeDisabled={(recipe) => {
+          const isSelected = selectedWeekly.some(x => x.name === recipe.name);
+          return !isSelected && wouldConflictWithSelected(recipe, selectedWeekly);
+        }}
       />
     </div>
   );

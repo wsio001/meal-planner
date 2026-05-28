@@ -9,8 +9,10 @@ import styles from './TabView.module.css';
 
 export function TabView({
   mealData,
-  numDinners,
+  numRecipes,
+  mealsPerWeek,
   numPeople,
+  servingsPerRecipe,
   calories,
   customRules,
   batchCookEnabled,
@@ -86,7 +88,7 @@ export function TabView({
         <>
           <RecreateRecipesView
             selectedCount={selectedWeekly.length}
-            numDinners={numDinners}
+            numRecipes={numRecipes}
             onRecreate={onRecreate}
             disabled={loading}
             customRules={customRules}
@@ -96,8 +98,10 @@ export function TabView({
             rulesLoaded={rulesLoaded}
           />
           <HistoryTab
-            numDinners={numDinners}
+            numRecipes={numRecipes}
+            mealsPerWeek={mealsPerWeek}
             numPeople={numPeople}
+            servingsPerRecipe={servingsPerRecipe}
             calories={calories}
             customRules={customRules}
             batchCookEnabled={batchCookEnabled}

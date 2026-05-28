@@ -36,6 +36,7 @@ export function safeR(r, i, isBatch) {
     name,
     cuisine: (r && r.cuisine) ? r.cuisine : 'Unknown',
     cookTime: (r && r.cookTime) ? r.cookTime : '30 mins',
+    cookingMethod: (r && r.cookingMethod) ? r.cookingMethod : '',
     caloriesPerServing: (r && r.caloriesPerServing) ? r.caloriesPerServing : '—',
     ingredients,
     workflow: (r && Array.isArray(r.workflow)) ? r.workflow : [],

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { C, S } from './constants';
-import { callClaude, buildPrompt, pickCuisines, chunkArr, pLimit } from './api';
+import { callClaude, buildPrompt, buildConcurrentWorkflowPrompt, pickCuisines, pickCookingMethods, chunkArr, pLimit } from './api';
 import { parseTabFormat, combineParsed, mergeParsedArray, saveRecipesBatched } from './data';
 import { useElapsed, usePersistedState } from './hooks';
 import { ErrorBoundary } from './components/ui';
@@ -19,8 +19,10 @@ function MealPlanner() {
 
   // Use settings from context
   const {
-    numDinners,
+    numRecipes,
+    mealsPerWeek,
     numPeople,
+    servingsPerRecipe,
     calories,
     isBatchEnabled,
     numBatch,
@@ -44,6 +46,7 @@ function MealPlanner() {
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [stage, setStage] = useState('');
   const [progress, setProgress] = useState([]);
+  const [workflowProgress, setWorkflowProgress] = useState(false);
   const [mealData, setMealData] = usePersistedState(STORAGE_KEYS.CURRENT_MEAL_PLAN, null, 'v1');
   const [error, setError] = useState('');
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -52,6 +55,7 @@ function MealPlanner() {
   const elapsed = useElapsed(loading);
 
   useEffect(() => { if(selectedBatch.length>numBatch) setSelectedBatch(p=>p.slice(0,numBatch)); }, [numBatch, selectedBatch.length, setSelectedBatch]);
+  useEffect(() => { if(selectedWeekly.length>numRecipes) setSelectedWeekly(p=>p.slice(0,numRecipes)); }, [numRecipes, selectedWeekly.length, setSelectedWeekly]);
   useEffect(() => () => { if(abortRef.current) abortRef.current.abort(); }, []);
 
   useEffect(() => {
@@ -71,23 +75,27 @@ function MealPlanner() {
     setError('');
     setMealData(null);
     const batchNeed = isBatchEnabled ? Math.max(0, numBatch-selectedBatch.length) : 0;
-    const needToGenerate = Math.max(0, numDinners - selectedWeekly.length);
+    const needToGenerate = Math.max(0, numRecipes - selectedWeekly.length);
     const totalSlots = needToGenerate + batchNeed;
     setProgress(Array(totalSlots).fill(false));
+    setWorkflowProgress(false);
     setStage(needToGenerate === 0 ? 'Loading meals...' : 'Generating recipes...');
     try {
       const cuisines = pickCuisines(needToGenerate);
+      const cookingMethods = pickCookingMethods(needToGenerate);
       const userSpecial = special.trim();
       const chunks = chunkArr(cuisines, 2);
+      const methodChunks = chunkArr(cookingMethods, 2);
       let recipeBaseIdx = 0;
-      const weeklyFns = chunks.map(chunk => {
+      const weeklyFns = chunks.map((chunk, chunkIdx) => {
         const baseIdx = recipeBaseIdx;
+        const methodChunk = methodChunks[chunkIdx] || [];
         recipeBaseIdx += chunk.length;
         return () => {
           const cuisineHint = chunk.length===1
             ? 'This recipe MUST be '+chunk[0]+' cuisine.'
             : 'Generate exactly 2 recipes. Recipe 1 MUST be '+chunk[0]+' cuisine. Recipe 2 MUST be '+chunk[1]+' cuisine.';
-          const p = buildPrompt(chunk.length, numPeople, calories, (cuisineHint+(userSpecial?' '+userSpecial:'')).trim(), customRules, false);
+          const p = buildPrompt(chunk.length, servingsPerRecipe, calories, (cuisineHint+(userSpecial?' '+userSpecial:'')).trim(), customRules, false, methodChunk);
           return callClaude(p.system, p.user, signal, apiKey).then(parseTabFormat).then(parsed => {
             chunk.forEach((_,j) => {
               const idx=baseIdx+j;
@@ -101,7 +109,7 @@ function MealPlanner() {
       const batchFn = batchNeed>0
         ? () => callClaude(...Object.values(buildPrompt(batchNeed,batchServings,calories,userSpecial,customRules,true)),signal,apiKey)
             .then(parseTabFormat).then(parsed => {
-              (parsed.recipes||[]).forEach((_,i)=>setProgress(prev=>{ const n=[...prev]; n[numDinners+i]=true; return n; }));
+              (parsed.recipes||[]).forEach((_,i)=>setProgress(prev=>{ const n=[...prev]; n[numRecipes+i]=true; return n; }));
               return parsed;
             })
         : () => Promise.resolve({recipes:[],grocery:[],iphoneNotes:{}});
@@ -112,13 +120,15 @@ function MealPlanner() {
       const shortfallFns = [];
       weeklyResults.forEach((parsed, ci) => {
         const chunk = chunks[ci];
+        const methodChunk = methodChunks[ci] || [];
         const got = (parsed.recipes||[]).length;
         if (got >= chunk.length) return;
         const chunkBase = chunks.slice(0,ci).reduce((s,c)=>s+c.length,0);
         chunk.slice(got).forEach((cuisine,j) => {
           const slotIdx = chunkBase+got+j;
+          const method = methodChunk[got+j] || cookingMethods[slotIdx] || '';
           shortfallFns.push(() => {
-            const p = buildPrompt(1, numPeople, calories, ('This recipe MUST be '+cuisine+' cuisine.'+(userSpecial?' '+userSpecial:'')).trim(), customRules, false);
+            const p = buildPrompt(1, servingsPerRecipe, calories, ('This recipe MUST be '+cuisine+' cuisine.'+(userSpecial?' '+userSpecial:'')).trim(), customRules, false, method ? [method] : []);
             return callClaude(p.system, p.user, signal, apiKey).then(parseTabFormat).then(r => {
               setProgress(prev=>{ const n=[...prev]; if(slotIdx<n.length) n[slotIdx]=true; return n; });
               return r;
@@ -145,13 +155,30 @@ function MealPlanner() {
       };
       const combined = combineParsed(combinedWeekly, bParsed, isBatchEnabled?selectedBatch:[]);
 
+      // Generate concurrent workflow
+      setStage('Creating concurrent workflow...');
+      let concurrentWorkflow = '';
+      try {
+        const weeklyRecipes = combined.recipes.filter(r => !r.isBatchCook);
+        const batchRecipes = isBatchEnabled ? (combined.recipes.filter(r => r.isBatchCook) || []) : [];
+
+        if (weeklyRecipes.length > 0) {
+          const workflowPrompt = buildConcurrentWorkflowPrompt(weeklyRecipes, batchRecipes);
+          concurrentWorkflow = await callClaude(workflowPrompt.system, workflowPrompt.user, signal, apiKey);
+          setWorkflowProgress(true);
+        }
+      } catch (e) {
+        console.warn('Failed to generate concurrent workflow:', e);
+        // Continue without concurrent workflow if it fails
+      }
+
       await saveRecipesBatched(
         combined.recipes.filter(r=>!r.isBatchCook&&!selectedWeekly.some(s=>s.name===r.name)),
         combined.recipes.filter(r=>r.isBatchCook&&!selectedBatch.some(s=>s.name===r.name))
       );
 
       // Set meal data - modal will auto-close after showing success animation
-      setMealData(combined);
+      setMealData({ ...combined, concurrentWorkflow });
 
       // If we skipped loading modal, close it immediately
       if (skipLoadingModal) {
@@ -173,7 +200,7 @@ function MealPlanner() {
 
   const handleRecreate = useCallback(async () => {
     // Special case: if needFill = 0 (all meals are reused), skip loading modal
-    const needFill = numDinners - selectedWeekly.length;
+    const needFill = numRecipes - selectedWeekly.length;
     if (needFill === 0) {
       // Fast retrieval - no loading modal needed
       await generate('', true);
@@ -182,7 +209,7 @@ function MealPlanner() {
       await generate('', false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [numDinners, selectedWeekly.length]);
+  }, [numRecipes, selectedWeekly.length]);
 
   const handleLoadingComplete = useCallback(() => {
     setShowLoadingModal(false);
@@ -207,8 +234,10 @@ function MealPlanner() {
         ) : (
           <TabView
             mealData={mealData}
-            numDinners={numDinners}
+            numRecipes={numRecipes}
+            mealsPerWeek={mealsPerWeek}
             numPeople={numPeople}
+            servingsPerRecipe={servingsPerRecipe}
             calories={calories}
             customRules={customRules}
             isBatchEnabled={isBatchEnabled}
@@ -266,7 +295,8 @@ function MealPlanner() {
         stage={stage}
         elapsed={elapsed}
         progress={progress}
-        numDinners={numDinners}
+        workflowProgress={workflowProgress}
+        numRecipes={numRecipes}
         onComplete={handleLoadingComplete}
       />
     </div>

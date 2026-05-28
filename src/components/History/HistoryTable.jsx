@@ -12,7 +12,8 @@ export const HistoryTable = React.memo(function HistoryTable({
   acBg,
   acText,
   checkDark,
-  disabled
+  disabled,
+  isRecipeDisabled // Optional function(recipe) => boolean to check per-recipe disabled state
 }) {
   const [sortKey, setSortKey] = useState('name');
   const [sortDir, setSortDir] = useState('asc');
@@ -47,6 +48,7 @@ export const HistoryTable = React.memo(function HistoryTable({
             {[
               ['name', 'Recipe Name'],
               ['cuisine', 'Cuisine'],
+              ['cookingMethod', 'Method'],
               ['caloriesPerServing', 'Cal/Serving']
             ].map(([k, l]) => (
               <th key={k} onClick={() => toggleSort(k)} style={S.thSort}>
@@ -64,7 +66,8 @@ export const HistoryTable = React.memo(function HistoryTable({
         <tbody>
           {sorted.map((recipe, i) => {
             const isSel = selectedNames.has(recipe.name);
-            const isDis = disabled || (!isSel && selected.length >= maxSelect);
+            const perRecipeDisabled = isRecipeDisabled ? isRecipeDisabled(recipe) : false;
+            const isDis = disabled || perRecipeDisabled || (!isSel && selected.length >= maxSelect);
             return (
               <HistoryRow
                 key={recipe.id || recipe.name + '_' + i}

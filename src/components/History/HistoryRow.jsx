@@ -51,6 +51,13 @@ export const HistoryRow = React.memo(function HistoryRow({
       <td className={styles.cuisineCell}>
         <span className={styles.cuisineBadge}>{recipe.cuisine}</span>
       </td>
+      <td className={styles.methodCell}>
+        {recipe.cookingMethod ? (
+          <span className={styles.methodBadge}>{recipe.cookingMethod}</span>
+        ) : (
+          <span className={styles.methodEmpty}>—</span>
+        )}
+      </td>
       <td className={styles.caloriesCell}>
         {recipe.caloriesPerServing && recipe.caloriesPerServing !== '—'
           ? '🔥 ' + recipe.caloriesPerServing

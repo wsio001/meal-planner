@@ -7,7 +7,7 @@ import { useSettings } from '../../contexts/SettingsContext';
 import styles from './HeaderView.module.css';
 
 export function HeaderView({ selectedBatch, onNavigateToHistory }) {
-  const { numDinners, numPeople, calories, isBatchEnabled, numBatch, batchServings } = useSettings();
+  const { numRecipes, mealsPerWeek, numPeople, totalServingsNeeded, calories, isBatchEnabled, numBatch, batchServings } = useSettings();
   const [showSettings, setShowSettings] = useState(false);
 
   const cssVars = useMemo(() => ({
@@ -27,7 +27,7 @@ export function HeaderView({ selectedBatch, onNavigateToHistory }) {
         <div className={styles.headerInfo}>
           <h1 className={styles.title}>🍽️ Weekly Meal Planner</h1>
           <p className={styles.summary}>
-            {numDinners + ' dinner' + (numDinners > 1 ? 's' : '') + ' · ' + numPeople + ' ' + (numPeople > 1 ? 'people' : 'person') + ' · 🔥 ' + calories + ' cal'}
+            {mealsPerWeek + ' meal' + (mealsPerWeek > 1 ? 's' : '') + '/week · ' + numRecipes + ' recipe' + (numRecipes > 1 ? 's' : '') + ' · ' + numPeople + ' ' + (numPeople > 1 ? 'people' : 'person') + ' · 🔥 ' + calories + ' cal'}
             {isBatchEnabled && (
               <span className={styles.batchInfo}>
                 {'· 🍲 Batch ×' + numBatch + ' (' + batchServings + ' srv)'}

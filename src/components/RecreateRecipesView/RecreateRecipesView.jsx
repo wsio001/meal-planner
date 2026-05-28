@@ -6,7 +6,7 @@ import styles from './RecreateRecipesView.module.css';
 
 export function RecreateRecipesView({
   selectedCount,
-  numDinners,
+  numRecipes,
   onRecreate,
   disabled,
   customRules,
@@ -15,7 +15,7 @@ export function RecreateRecipesView({
   calories,
   rulesLoaded
 }) {
-  const needToFill = numDinners - selectedCount;
+  const needToFill = numRecipes - selectedCount;
   const buttonLabel = selectedCount === 0
     ? '✨ Cook Without History'
     : needToFill === 0
@@ -33,7 +33,7 @@ export function RecreateRecipesView({
         Select from below to reuse recipes
       </label>
 
-      <HistoryMealsCounter selectedCount={selectedCount} numDinners={numDinners} />
+      <HistoryMealsCounter selectedCount={selectedCount} numRecipes={numRecipes} />
 
       <GenerateButton
         onClick={onRecreate}
